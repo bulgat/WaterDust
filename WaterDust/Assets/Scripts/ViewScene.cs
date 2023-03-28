@@ -27,7 +27,7 @@ public class ViewScene : MonoBehaviour
     }
     void CreateCubeWorld()
     {
-        foreach (HyperCubeModel hyperCubeModel in _modelSceneScr._hyperCubeClassList)
+        foreach (HyperCubeModel hyperCubeModel in _modelSceneScr.GetHyperCubeClassList())
         {
             GameObject cube = Instantiate(GiperCube, new Vector3(hyperCubeModel.GetMoveCube().X, hyperCubeModel.GetMoveCube().Y, hyperCubeModel.GetMoveCube().Z), Quaternion.identity);
             HyperCube hyperCube = cube.GetComponent<HyperCube>();

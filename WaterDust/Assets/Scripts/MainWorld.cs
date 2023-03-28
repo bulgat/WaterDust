@@ -12,6 +12,6 @@ public class MainWorld : MonoBehaviour
 
     void Update()
     {
-        _modelSceneScr.Update();
+       // _modelSceneScr.Update();
     }
 }

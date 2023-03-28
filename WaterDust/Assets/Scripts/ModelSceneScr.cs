@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
+using System.Threading.Tasks;
+using System.Threading;
 
-public class ModelSceneScr 
+public class ModelSceneScr
 {
-    public List<HyperCubeModel> _hyperCubeClassList;
+    private List<HyperCubeModel> _hyperCubeClassList;
     public int SizeWorld = 20;
     public int Yremove = 1;//-3
-    static ModelSceneScr _modelSceneScr=null;
+    static ModelSceneScr _modelSceneScr = null;
     public bool RandomImpulse = false;
     ModelList _cubeModelList;
     public static int ImpulseStart = 10;
@@ -18,35 +20,39 @@ public class ModelSceneScr
     int _maxFloor = _floor + 6;// + 6;
     public AltitudeMap _altitudeMap;
     public AltitudeMap _waterAltitudeMap;
+    System.Random rand = new System.Random();
+    public List<HyperCubeModel> GetHyperCubeClassList()
+    {
+        return new List<HyperCubeModel>(_hyperCubeClassList);
+    }
 
     public static ModelSceneScr GetInstanceModelSceneScr()
     {
         if (_modelSceneScr == null)
-        { 
+        {
             _modelSceneScr = new ModelSceneScr().Init();
         }
         return _modelSceneScr;
     }
 
-        Dictionary<Key3D, GameObject> _allCube_Dic;
+    Dictionary<Key3D, GameObject> _allCube_Dic;
     int indexCubeIncr;
     DictionarySpecialComparer dictionarySpecialComparer = new DictionarySpecialComparer();
-    public ModelSceneScr Init() {
+    public ModelSceneScr Init()
+    {
         _modelSceneScr = new ModelSceneScr();
         _cubeModelList = new ModelList();
-        //int _maxFloor = _floor + 2+ 6;//
-        //_removeFlowDict = new Dictionary<int, int>();
 
         _altitudeMap = new AltitudeMap();
         _waterAltitudeMap = new AltitudeMap();
 
         _hyperCubeClassList = new List<HyperCubeModel>();
-        
-        
-        
+
+
+
         _allCube_Dic = new Dictionary<Key3D, GameObject>(dictionarySpecialComparer);
         _cubeModelList.InitAllCube(_modelSceneScr.SizeWorld, _maxFloor, _modelSceneScr.SizeWorld);
-  
+
         for (int i = 0; i < 10; i++)
         {
 
@@ -57,28 +63,19 @@ public class ModelSceneScr
                     bool water = false;
                     if (y >= 2 + _floor && i != 0 && z != 0 && i != 9)
                     {
-                        //var cubeRenderer = cube.GetComponent<Renderer>();
-                        //cubeRenderer.material.SetColor("_Color", Color.cyan);
-                        //hyperCubeModel.Water = true;
+
                         water = true;
                     }
 
                     HyperCubeModel hyperCubeModel = GetNewCube(water, i, y, z);
 
-                    //indexCubeIncr++;
-     
-                    //HyperCubeModel hyperCubeModel = new HyperCubeModel();
-                    //hyperCubeModel.Id = indexCubeIncr;
                     // create water
-                    
-                    //Key3D key3D = new Key3D(i, y, z);
 
-                    //hyperCubeModel.SetMoveCube(key3D);
 
                     _hyperCubeClassList.Add(hyperCubeModel);
 
                     _cubeModelList.SetCube(hyperCubeModel.GetMoveCube().X, hyperCubeModel.GetMoveCube().Y, hyperCubeModel.GetMoveCube().Z, hyperCubeModel.Id);
-                    
+
                 }
             }
         }
@@ -91,138 +88,43 @@ public class ModelSceneScr
 
         RemoveCube(t);
 
-        
+
         _altitudeMap.Init(SizeWorld, SizeWorld);
         _waterAltitudeMap.Init(SizeWorld, SizeWorld);
 
+
+        //TaskUpdate(this);
+        ThreadStart writeSecond = new ThreadStart(WriteSecond);
+        Thread thread = new Thread(WriteSecond);
+        thread.Start();
+
         return this;
     }
-
-    private HyperCubeModel GetNewCube(bool Water, int x,int y,int z) {
-        indexCubeIncr++;
-
-        HyperCubeModel hyperCubeModel = new HyperCubeModel();
-        hyperCubeModel.Id = indexCubeIncr;
-
-        hyperCubeModel.Water = Water;
-
-        Key3D key3D = new Key3D(x, y, z);
-
-        hyperCubeModel.SetMoveCube(key3D);
-
-        return hyperCubeModel;
-    }
-
-
-    List<Key3D> _removeKeyList;
-    int[,] checkSide = new[,] { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
-    private Key3D GetIdDownCube(HyperCubeModel hyperCubeItemCube)
+    public static void TaskUpdate(ModelSceneScr modelSceneScr)
     {
-        Key3D keyDown = new Key3D(hyperCubeItemCube.GetMoveCube().X, hyperCubeItemCube.GetMoveCube().Y - 1, hyperCubeItemCube.GetMoveCube().Z);
-        // move down.
-        return keyDown;
+        Task.Delay(3000);
+        Task.Run(() => {
+            while (true)
+            {
+                modelSceneScr.Update();
+                Debug.Log(" @@@@@=======  move down active stone =  ");
+            }
+        });
 
-
-        //return _cubeModelList.GetCube(keyDown.X, keyDown.Y, keyDown.Z);
     }
-    private void SendAttractionDownImpulse( Key3D sub_ar)
+    static void WriteSecond()
     {
-        // send attraction
-        for (var i = 0; i < checkSide.Length / checkSide.Rank; i++)
+        Task.Delay(100);
+        while (true)
         {
-            if ((Convert.ToInt32(sub_ar.X) + checkSide[i, 0]) >= 0 && (Convert.ToInt32(sub_ar.Z) + checkSide[i, 1]) >= 0)
-            {
-
-                Key3D keySide = new Key3D(Convert.ToInt32(sub_ar.X) + checkSide[i, 0], Convert.ToInt32(sub_ar.Y), Convert.ToInt32(sub_ar.Z) + checkSide[i, 1]);
-
-            }
+            _modelSceneScr.Update();
+            //Thread.Sleep(10000);
+            System.Diagnostics.Debug.WriteLine("-  по дороге = " + Thread.CurrentThread.GetHashCode());
         }
     }
-
-
-    bool MoveDownCube(HyperCubeModel hyperCubeItemCube, List<HyperCubeModel> addHyperCubeModelList,bool Stone) {
-Key3D downCube = GetIdDownCube(hyperCubeItemCube);
-        int downCubeId = _cubeModelList.GetCube(downCube.X, downCube.Y, downCube.Z);
-        
-
-        Key3D keyDown = new Key3D(hyperCubeItemCube.GetMoveCube().X, hyperCubeItemCube.GetMoveCube().Y - 1, hyperCubeItemCube.GetMoveCube().Z);
-        
-
-        if (downCubeId == 0)
-        {
-
-
-            //Key3D keyDown = new Key3D(hyperCubeItemCube.GetMoveCube().X, hyperCubeItemCube.GetMoveCube().Y - 1, hyperCubeItemCube.GetMoveCube().Z);
-
-            SendAttractionDownImpulse(keyDown);
-
-            //Debug.Log("ВНИЗ Id = " + hyperCubeItemCube.Id + " cube downCube id=" + downCube + " +++ key cube = "+ hyperCubeItemCube.GetMoveCube().X+","+ hyperCubeItemCube.GetMoveCube().Y+"," + hyperCubeItemCube.GetMoveCube().Z + "       DOWN POSITION  x= " + keyDown.X+","+ keyDown.Y+","+ keyDown.Z);
-
-            hyperCubeItemCube.SpendImpulse(60);
-
-
-            new MoveCubePhysicRealModel().MoveCubePhysicReal(_cubeModelList, hyperCubeItemCube, keyDown.X, keyDown.Y, keyDown.Z);
-
-            hyperCubeItemCube.PathList = null;
-
-            //cast stone cube
-            if (hyperCubeItemCube.TakeStone)
-            {
-                Debug.Log("================ 00   == =");
-                HyperCubeModel hyperCubeModel = SetStoneRandom(hyperCubeItemCube);
-                
-                if (hyperCubeModel == null)
-                {
-
-                    //continue;
-                    return true;
-                }
-                //hyperCubeModel.ActiveStone = false;
-                hyperCubeModel.ActiveStone = true;
-
-                //set stoun cast cube
-                addHyperCubeModelList.Add(hyperCubeModel);
-
-                hyperCubeItemCube.TakeStone = false;
-            }
-
-            //continue;
-            return true;
-        }
-        else
-        {
-            if (Stone) {
-                if (downCubeId != 0) {
-                     
-                    HyperCubeModel hyperCubeWater = GetCubeWithId(downCubeId);
-                    if (hyperCubeWater.Water) { 
-                        Debug.Log("Stone   " + hyperCubeItemCube.Id+ " id      downCube=  " + downCube + "  waterCube  y= " + hyperCubeItemCube.GetMoveCube().Y);
-
-                        Key3D keyUpWater = new Key3D(hyperCubeItemCube.GetMoveCube().X, hyperCubeItemCube.GetMoveCube().Y, hyperCubeItemCube.GetMoveCube().Z);
-
-                        //water cube up
-                        new MoveCubePhysicRealModel().MoveCubePhysicReal(_cubeModelList, hyperCubeWater, keyUpWater.X, keyUpWater.Y, keyUpWater.Z);
-
-                        new MoveCubePhysicRealModel().MoveCubePhysicReal(_cubeModelList, hyperCubeItemCube, keyDown.X, keyDown.Y, keyDown.Z);
-                        
-                    }
-                }
-                  
-            }
-        }
-
-        return false;
-
-    }
-
-
-
-
-
-
     public void Update()
     {
-        
+
         _removeKeyList = new List<Key3D>();
         List<Key3D> removeKeyDestroyList = new List<Key3D>();
         List<HyperCubeModel> addHyperCubeModelList = new List<HyperCubeModel>();
@@ -233,61 +135,15 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
             if (hyperCubeItemCube.Water)
             {
 
-                if (MoveDownCube(hyperCubeItemCube, addHyperCubeModelList,false))
+                if (MoveDownCube(hyperCubeItemCube, addHyperCubeModelList, false))
                 {
                     continue;
                 }
-                /*
-                int downCube = GetIdDownCube(hyperCubeItemCube);
-               // Debug.Log(hyperCubeItemCube.Id+ " id      downCube=  " + downCube + "  waterCube  y= " + hyperCubeItemCube.GetMoveCube().Y);
-                if (downCube == 0)
-                {
 
-
-                    Key3D keyDown = new Key3D(hyperCubeItemCube.GetMoveCube().X, hyperCubeItemCube.GetMoveCube().Y - 1, hyperCubeItemCube.GetMoveCube().Z);
-
-                    SendAttractionDownImpulse(keyDown);
-
-//Debug.Log("ВНИЗ Id = " + hyperCubeItemCube.Id + " cube downCube id=" + downCube + " +++ key cube = "+ hyperCubeItemCube.GetMoveCube().X+","+ hyperCubeItemCube.GetMoveCube().Y+"," + hyperCubeItemCube.GetMoveCube().Z + "       DOWN POSITION  x= " + keyDown.X+","+ keyDown.Y+","+ keyDown.Z);
-
-                    hyperCubeItemCube.SpendImpulse(60);
-
-                   
-                    new MoveCubePhysicRealModel().MoveCubePhysicReal(_cubeModelList,hyperCubeItemCube, keyDown.X, keyDown.Y, keyDown.Z);
-
-                    hyperCubeItemCube.PathList = null;
-
-                    //quit stone.
-                    if (hyperCubeItemCube.TakeStone == true) {
-                    
-                    }
-
-                    //cast stone cube
-                    if (hyperCubeItemCube.TakeStone) {
-
-                        HyperCubeModel hyperCubeModel = SetStoneRandom(hyperCubeItemCube,false);
-                        if (hyperCubeModel == null)
-                        {
-                            continue;
-                        }
-
-                        //Key3D keySide = GetCubeSpaceEmpty(hyperCubeItemCube);
-                        //set stoun cast cube
-
-                        //HyperCubeModel hyperCubeModel = GetNewCube(false, keySide.X, keySide.Y, keySide.Z);
-
-                        addHyperCubeModelList.Add(hyperCubeModel);
-
-                        hyperCubeItemCube.TakeStone = false;
-                    }
-
-                    continue;
-                }
-                */
                 //check left, right, forward, back
                 if (hyperCubeItemCube.GetImpulse() >= 0)
                 {
-                    Key3D keySide = GetCubeSpaceEmpty(hyperCubeItemCube,true);
+                    Key3D keySide = GetCubeSpaceEmpty(hyperCubeItemCube, true);
                     if (keySide != null)
                     {
                         //Debug.Log("Move SideCube id =" + hyperCubeItemCube.Id + "  =[" + hyperCubeItemCube.GetMoveCube().X + "," + hyperCubeItemCube.GetMoveCube().Y + "," + hyperCubeItemCube.GetMoveCube().Z + "]==   ( x =" + keySide.X + " y=" + keySide.Y + " z=" + keySide.Z + " )===  =");
@@ -298,34 +154,7 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
                         continue;
                     }
                 }
-                /*
-                //check left, right, forward, back
 
-                for (var i = 0; i < checkSide.Length / checkSide.Rank; i++)
-                {
-                    Key3D keySide = new Key3D((hyperCubeItemCube.GetMoveCube().X + checkSide[i, 0]), hyperCubeItemCube.GetMoveCube().Y, (hyperCubeItemCube.GetMoveCube().Z + checkSide[i, 1]));
-
-                    var sideCube = _cubeModelList.GetCube(keySide.X, keySide.Y, keySide.Z);
-
-                    if (sideCube == 0)
-                    {
-
-                        if (_modelSceneScr.AllowMoveCube(keySide.X, keySide.Z))
-                        {
-
-
-                            //Debug.Log("Move SideCube id =" + hyperCubeItemCube.Id + "  =[" + hyperCubeItemCube.GetMoveCube().X + "," + hyperCubeItemCube.GetMoveCube().Y + "," + hyperCubeItemCube.GetMoveCube().Z + "]==   ( x =" + keySide.X + " y=" + keySide.Y + " z=" + keySide.Z + " )===  =");
-
-                            // Move
-                            new MoveCubePhysicRealModel().MoveCubePhysicReal(_cubeModelList,hyperCubeItemCube, keySide.X, keySide.Y, keySide.Z);
-
-                           // break;
-                           continue;
-
-                        }
-                    }
-                }
-                */
                 if (hyperCubeItemCube.GetImpulse() <= 0)
                 {
                     if (hyperCubeItemCube.PathList != null)
@@ -366,10 +195,10 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
                         if (pathList != null)
                         {
 
-                            
+
                             // Move with path
                             Key3D idRemoveCubeStream = MoveCubePathFind(hyperCubeItemCube, addHyperCubeModelList);
-                            if (idRemoveCubeStream !=null)
+                            if (idRemoveCubeStream != null)
                             {
                                 //Key3D keyDown = new Key3D(hyperCubeItemCube.GetMoveCube().X, hyperCubeItemCube.GetMoveCube().Y - 1, hyperCubeItemCube.GetMoveCube().Z);
                                 Debug.Log(" VE idRemoveCubeStream = " + idRemoveCubeStream);
@@ -392,20 +221,20 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
 
 
             }
-            else 
+            else
             {
                 //move down active stone
                 if (hyperCubeItemCube.ActiveStone)
                 {
                     //Debug.Log("В _ id = " + hyperCubeItemCube.Id + "____  Set ActiveStone = ");
-                    if (MoveDownCube(hyperCubeItemCube, addHyperCubeModelList,true))
+                    if (MoveDownCube(hyperCubeItemCube, addHyperCubeModelList, true))
                     {
-                        //Debug.Log(" ========   cube move down active stone =  ");
+                        
                         continue;
                     }
-                    else 
+                    else
                     {
-                       // hyperCubeItemCube.ActiveStone = false;
+                        // hyperCubeItemCube.ActiveStone = false;
                     }
                 }
             }
@@ -418,7 +247,8 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
         RemoveCubeOutWorld();
 
         //add  HyperCubeModelList
-        foreach (var itemHyperCubeModel in addHyperCubeModelList) {
+        foreach (var itemHyperCubeModel in addHyperCubeModelList)
+        {
             _hyperCubeClassList.Add(itemHyperCubeModel);
 
             _cubeModelList.SetCube(itemHyperCubeModel.GetMoveCube().X, itemHyperCubeModel.GetMoveCube().Y, itemHyperCubeModel.GetMoveCube().Z, itemHyperCubeModel.Id);
@@ -428,22 +258,154 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
         CreateMap3Dtop();
     }
 
-    HyperCubeModel SetStoneRandom(HyperCubeModel hyperCubeItemCube) {
-        Key3D keySide = GetCubeSpaceEmpty(hyperCubeItemCube,true);
+    HyperCubeModel SetStoneRandom(HyperCubeModel hyperCubeItemCube)
+    {
+        Key3D keySide = GetCubeSpaceEmpty(hyperCubeItemCube, true);
 
-        if (keySide == null) {
+        if (keySide == null)
+        {
             return null;
         }
         //set stoun cast cube
-        
-        
+
+
         HyperCubeModel hyperCubeModel = GetNewCube(false, keySide.X, keySide.Y, keySide.Z);
 
 
         return hyperCubeModel;
     }
 
-    private Key3D MoveCubePathFind(HyperCubeModel itemCubeValue,List<HyperCubeModel> addHyperCubeModelList)
+
+    private HyperCubeModel GetNewCube(bool Water, int x, int y, int z)
+    {
+        indexCubeIncr++;
+
+        HyperCubeModel hyperCubeModel = new HyperCubeModel();
+        hyperCubeModel.Id = indexCubeIncr;
+
+        hyperCubeModel.Water = Water;
+
+        Key3D key3D = new Key3D(x, y, z);
+
+        hyperCubeModel.SetMoveCube(key3D);
+
+        return hyperCubeModel;
+    }
+
+
+    List<Key3D> _removeKeyList;
+    int[,] checkSide = new[,] { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
+    private Key3D GetIdDownCube(HyperCubeModel hyperCubeItemCube)
+    {
+        Key3D keyDown = new Key3D(hyperCubeItemCube.GetMoveCube().X, hyperCubeItemCube.GetMoveCube().Y - 1, hyperCubeItemCube.GetMoveCube().Z);
+        // move down.
+        return keyDown;
+
+
+        //return _cubeModelList.GetCube(keyDown.X, keyDown.Y, keyDown.Z);
+    }
+    private void SendAttractionDownImpulse(Key3D sub_ar)
+    {
+        // send attraction
+        for (var i = 0; i < checkSide.Length / checkSide.Rank; i++)
+        {
+            if ((Convert.ToInt32(sub_ar.X) + checkSide[i, 0]) >= 0 && (Convert.ToInt32(sub_ar.Z) + checkSide[i, 1]) >= 0)
+            {
+
+                Key3D keySide = new Key3D(Convert.ToInt32(sub_ar.X) + checkSide[i, 0], Convert.ToInt32(sub_ar.Y), Convert.ToInt32(sub_ar.Z) + checkSide[i, 1]);
+
+            }
+        }
+    }
+
+
+    bool MoveDownCube(HyperCubeModel hyperCubeItemCube, List<HyperCubeModel> addHyperCubeModelList, bool Stone)
+    {
+        Key3D downCube = GetIdDownCube(hyperCubeItemCube);
+        int downCubeId = _cubeModelList.GetCube(downCube.X, downCube.Y, downCube.Z);
+
+
+        Key3D keyDown = new Key3D(hyperCubeItemCube.GetMoveCube().X, hyperCubeItemCube.GetMoveCube().Y - 1, hyperCubeItemCube.GetMoveCube().Z);
+
+
+        if (downCubeId == 0)
+        {
+
+
+            //Key3D keyDown = new Key3D(hyperCubeItemCube.GetMoveCube().X, hyperCubeItemCube.GetMoveCube().Y - 1, hyperCubeItemCube.GetMoveCube().Z);
+
+            SendAttractionDownImpulse(keyDown);
+
+            //Debug.Log("ВНИЗ Id = " + hyperCubeItemCube.Id + " cube downCube id=" + downCube + " +++ key cube = "+ hyperCubeItemCube.GetMoveCube().X+","+ hyperCubeItemCube.GetMoveCube().Y+"," + hyperCubeItemCube.GetMoveCube().Z + "       DOWN POSITION  x= " + keyDown.X+","+ keyDown.Y+","+ keyDown.Z);
+
+            hyperCubeItemCube.SpendImpulse(60);
+
+
+            new MoveCubePhysicRealModel().MoveCubePhysicReal(_cubeModelList, hyperCubeItemCube, keyDown.X, keyDown.Y, keyDown.Z);
+
+            hyperCubeItemCube.PathList = null;
+
+            //cast stone cube
+            if (hyperCubeItemCube.TakeStone)
+            {
+                Debug.Log("================ 00   == =");
+                HyperCubeModel hyperCubeModel = SetStoneRandom(hyperCubeItemCube);
+
+                if (hyperCubeModel == null)
+                {
+
+                    //continue;
+                    return true;
+                }
+                //hyperCubeModel.ActiveStone = false;
+                hyperCubeModel.ActiveStone = true;
+
+                //set stoun cast cube
+                addHyperCubeModelList.Add(hyperCubeModel);
+
+                hyperCubeItemCube.TakeStone = false;
+            }
+
+            //continue;
+            return true;
+        }
+        else
+        {
+            if (Stone)
+            {
+                if (downCubeId != 0)
+                {
+
+                    HyperCubeModel hyperCubeWater = GetCubeWithId(downCubeId);
+                    if (hyperCubeWater.Water)
+                    {
+                        Debug.Log("Stone   " + hyperCubeItemCube.Id + " id      downCube=  " + downCube + "  waterCube  y= " + hyperCubeItemCube.GetMoveCube().Y);
+
+                        Key3D keyUpWater = new Key3D(hyperCubeItemCube.GetMoveCube().X, hyperCubeItemCube.GetMoveCube().Y, hyperCubeItemCube.GetMoveCube().Z);
+
+                        //water cube up
+                        new MoveCubePhysicRealModel().MoveCubePhysicReal(_cubeModelList, hyperCubeWater, keyUpWater.X, keyUpWater.Y, keyUpWater.Z);
+
+                        new MoveCubePhysicRealModel().MoveCubePhysicReal(_cubeModelList, hyperCubeItemCube, keyDown.X, keyDown.Y, keyDown.Z);
+
+                    }
+                }
+
+            }
+        }
+
+        return false;
+
+    }
+
+
+
+
+
+
+
+
+    private Key3D MoveCubePathFind(HyperCubeModel itemCubeValue, List<HyperCubeModel> addHyperCubeModelList)
     {
         Key3D itemCubeKey = itemCubeValue.GetMoveCube();
 
@@ -469,11 +431,12 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
                     if (itemCubeValue.TakeStone == false)
                     {
                         //random Take Stone
-                        float randomNum = Mathf.Floor(UnityEngine.Random.Range(0f, 5.0f));
-
+                        //float randomNum = Mathf.Floor(UnityEngine.Random.Range(0f, 5.0f));
+                        float randomNum = rand.Next(0, 5);
                         if (randomNum == 0)
                         {
-                            float randomSelectNum = Mathf.Floor(UnityEngine.Random.Range(0f, 2.0f));
+                            //float randomSelectNum = Mathf.Floor(UnityEngine.Random.Range(0f, 2.0f));
+                            float randomSelectNum = rand.Next(0,2);
                             Key3D idRemoveCube = null;
 
                             if (randomSelectNum == 0)
@@ -487,8 +450,8 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
                                 idRemoveCube = GetCubeSpaceEmpty(itemCubeValue, false);
                                 //if (keySide != null)
                                 //{
-                                    //idRemoveCube = _cubeModelList.GetCube(keySide.X, keySide.Y, keySide.Z);
-                                    Debug.Log(" Si  idRemoveCube =" + idRemoveCube + ", === x =");
+                                //idRemoveCube = _cubeModelList.GetCube(keySide.X, keySide.Y, keySide.Z);
+                                Debug.Log(" Si  idRemoveCube =" + idRemoveCube + ", === x =");
 
                                 //}
                             }
@@ -498,19 +461,21 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
                     }
 
                     // Cast stone
-                    
+
                     if (itemCubeValue.TakeStone)
                     {
                         //Random cast stone
-                        float randomNum = Mathf.Floor(UnityEngine.Random.Range(0f, 5.0f));
+                        //float randomNum = Mathf.Floor(UnityEngine.Random.Range(0f, 5.0f));
+                        float randomNum = rand.Next(0,5);
                         if (randomNum == 0)
                         {
                             HyperCubeModel hyperCubeModel = SetStoneRandom(itemCubeValue);
-                            
+
                             if (hyperCubeModel == null)
                             {
-                                
-                            } else
+
+                            }
+                            else
                             {
                                 hyperCubeModel.ActiveStone = true;
                                 addHyperCubeModelList.Add(hyperCubeModel);
@@ -518,10 +483,10 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
                                 itemCubeValue.TakeStone = false;
                             }
 
-                            
+
                         }
                     }
-                    
+
 
                     if (itemCubeValue.PathList.Count == 0)
                     {
@@ -595,7 +560,8 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
 
     }
 
-    private Key3D GetCubeSpaceEmpty(HyperCubeModel hyperCubeItemCube, bool EmptyPlace) {
+    private Key3D GetCubeSpaceEmpty(HyperCubeModel hyperCubeItemCube, bool EmptyPlace)
+    {
         //check left, right, forward, back
 
         for (var i = 0; i < checkSide.Length / checkSide.Rank; i++)
@@ -613,11 +579,11 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
                     {
 
                         return keySide;
-                   
+
                     }
                 }
             }
-            else 
+            else
             {
                 if (sideCube > 0)
                 {
@@ -631,35 +597,37 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
         return null;
     }
 
-    private void RemoveCubeOutWorld() { 
-     List<HyperCubeModel> removeKeyDestList = DeleteOutWorld();
+    private void RemoveCubeOutWorld()
+    {
+        List<HyperCubeModel> removeKeyDestList = DeleteOutWorld();
         foreach (HyperCubeModel itemCube in removeKeyDestList)
         {
-            
+
             RemoveCube(itemCube);
 
         }
     }
-    
-    private void CreateMap3Dtop() 
+
+    private void CreateMap3Dtop()
     {
         // int[,] altitudeMap_ar = new int[SizeWorld, SizeWorld];
 
-        for (int GridX= 0; GridX < SizeWorld; GridX++)
+        for (int GridX = 0; GridX < SizeWorld; GridX++)
         {
 
             for (int GridZ = 0; GridZ < SizeWorld; GridZ++)
             {
-                bool water=false;
-                for (int GridY = _maxFloor-1; GridY >= _floor; GridY--)
+                bool water = false;
+                for (int GridY = _maxFloor - 1; GridY >= _floor; GridY--)
                 {
                     //Debug.Log("i   x  = " + GridX + "  T AL  y= " + GridY + " z = " + GridZ + "  ubeKol =" );
-                    var quadId = _cubeModelList.GetCube(GridX,GridY, GridZ);
+                    var quadId = _cubeModelList.GetCube(GridX, GridY, GridZ);
                     //altitudeMap_ar[GridX, GridZ] = GridY;
                     _altitudeMap.SetAltutude(GridX, GridZ, GridY);
 
 
-                    if (quadId > 0) {
+                    if (quadId > 0)
+                    {
                         //HyperCubeModel hyperCube = _hyperCubeClassList.Where(a => a.Id == quadId).FirstOrDefault();
                         HyperCubeModel hyperCube = GetCubeWithId(quadId);
                         if (hyperCube.Water)
@@ -671,7 +639,7 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
                                 water = true;
                             }
                         }
-                        else 
+                        else
                         {
                             if (water == false)
                             {
@@ -680,13 +648,14 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
                             _altitudeMap.SetAltutude(GridX, GridZ, GridY);
                             break;
                         }
-                        
+
                         //break;
                     }
-                    if (GridY== _floor) {
-                        _waterAltitudeMap.SetAltutude(GridX, GridZ, _floor-1);
-                        _altitudeMap.SetAltutude(GridX, GridZ, _floor-1);
-                       // Debug.Log("quadId = "+quadId +"  -   LET   Y =  " + GridY);
+                    if (GridY == _floor)
+                    {
+                        _waterAltitudeMap.SetAltutude(GridX, GridZ, _floor - 1);
+                        _altitudeMap.SetAltutude(GridX, GridZ, _floor - 1);
+                        // Debug.Log("quadId = "+quadId +"  -   LET   Y =  " + GridY);
                     }
                 }
 
@@ -695,14 +664,15 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
 
 
         }
-        
+
     }
-    private HyperCubeModel GetCubeWithId(int quadId) {
+    private HyperCubeModel GetCubeWithId(int quadId)
+    {
         return _hyperCubeClassList.Where(a => a.Id == quadId).FirstOrDefault();
     }
     public void RemoveCube(HyperCubeModel hyperCubeItemCube)
     {
-        _cubeModelList.SetCube(hyperCubeItemCube.GetMoveCube().X, hyperCubeItemCube.GetMoveCube().Y, hyperCubeItemCube.GetMoveCube().Z,0);
+        _cubeModelList.SetCube(hyperCubeItemCube.GetMoveCube().X, hyperCubeItemCube.GetMoveCube().Y, hyperCubeItemCube.GetMoveCube().Z, 0);
         _hyperCubeClassList.Remove(hyperCubeItemCube);
 
     }
@@ -720,8 +690,9 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
 
 
 
-    public ModelSceneScr  GetModelSceneScr() {
-        
+    public ModelSceneScr GetModelSceneScr()
+    {
+
         return _modelSceneScr;
     }
 
@@ -755,15 +726,16 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
 
         return CreateMap_ar;
     }
-    
-    public Grid GetRandomPreparationMap(HyperCubeModel waterCube,int LevelY) {
+
+    public Grid GetRandomPreparationMap(HyperCubeModel waterCube, int LevelY)
+    {
         List<long[]> preparationMapUp = GetPreparationMap(LevelY);
-        List<long[]> preparationMapDown = GetPreparationMap(LevelY-1);
+        List<long[]> preparationMapDown = GetPreparationMap(LevelY - 1);
 
         var gridUp_ar = GetGridList(preparationMapUp, LevelY);
-        var gridDown_ar = GetGridList(preparationMapDown, LevelY-1);
+        var gridDown_ar = GetGridList(preparationMapDown, LevelY - 1);
 
-       List<Grid> gridClearList = gridUp_ar.Except(gridDown_ar, new ProductComparer()).ToList();
+        List<Grid> gridClearList = gridUp_ar.Except(gridDown_ar, new ProductComparer()).ToList();
 
 
         List<Grid> AllPlace_ar = gridClearList.Where(a => a.Wall == false).ToList();
@@ -774,32 +746,38 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
         {
             randomPlace_ar = distanceCube_ar;
         }
-        else {
+        else
+        {
             randomPlace_ar = AllPlace_ar;
         }
 
-        int numberCube = (int)UnityEngine.Random.Range(0, randomPlace_ar.Count);
+        //int numberCube = (int)UnityEngine.Random.Range(0, randomPlace_ar.Count);
+        int numberCube = rand.Next(0, randomPlace_ar.Count);
         Grid randomPlace = randomPlace_ar[numberCube];
         return randomPlace;
     }
-    private List<Grid> GetNitherCube(HyperCubeModel waterCube, List<Grid> randomPlace_ar) {
-        if (randomPlace_ar == null) {
+    private List<Grid> GetNitherCube(HyperCubeModel waterCube, List<Grid> randomPlace_ar)
+    {
+        if (randomPlace_ar == null)
+        {
             return new List<Grid>();
         }
         int distanceStat = 4;
         List<Grid> distanceCube_ar = new List<Grid>();
-        
+
         foreach (Grid itemGrid in randomPlace_ar)
         {
             float distance = Vector3.Distance(new Vector3(waterCube.GetMoveCube().X, waterCube.GetMoveCube().Y, waterCube.GetMoveCube().Z), new Vector3(itemGrid.SpotX, itemGrid.SpotY, itemGrid.SpotZ));
-            if (distance< distanceStat) {
+            if (distance < distanceStat)
+            {
                 distanceCube_ar.Add(itemGrid);
             }
         }
         //Debug.Log("  = - -   randomPlace_ar =  "+ distanceCube_ar.Count);
         return distanceCube_ar;
     }
-    private List<Grid> GetGridList(List<long[]> preparationMapUp,int LevelY) {
+    private List<Grid> GetGridList(List<long[]> preparationMapUp, int LevelY)
+    {
         List<Grid> grid_ar = new List<Grid>();
         for (int GridRow = 0; GridRow < new ModelSceneScr().GetModelSceneScr().SizeWorld; GridRow++)
         {
@@ -820,10 +798,11 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
     public void PrintMap(int Id, int floorMap)
     {
         List<long[]> createMap_ar = new ModelSceneScr().GetModelSceneScr().GetPreparationMap(floorMap);
-        PrintMapCard(createMap_ar,Id);
+        PrintMapCard(createMap_ar, Id);
     }
-    public void PrintMapCard(List<long[]> createMap_ar,int Id) { 
-        Debug.Log(Id+" ------------------------------------------------- " + new ModelSceneScr().GetModelSceneScr().SizeWorld);
+    public void PrintMapCard(List<long[]> createMap_ar, int Id)
+    {
+        Debug.Log(Id + " ------------------------------------------------- " + new ModelSceneScr().GetModelSceneScr().SizeWorld);
         for (int GridRow = 0; GridRow < new ModelSceneScr().GetModelSceneScr().SizeWorld; GridRow++)
         {
             string line = "_";
@@ -831,10 +810,10 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
             {
                 line += (createMap_ar[GridRow][GridLine] == 0 ? "00" : "77") + ".";
             }
-            Debug.Log(" PRINT Imp =="+GridRow +  " IIIIIIIII = " + line);
+            Debug.Log(" PRINT Imp ==" + GridRow + " IIIIIIIII = " + line);
         }
 
-        Debug.Log(Id+" ------------------------------------------------- ");
+        Debug.Log(Id + " ------------------------------------------------- ");
     }
     public bool AllowMoveCube(int x, int y)
     {
@@ -859,7 +838,7 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
         int wallObstacle = 1;
         List<Point> pathList = ConvertToPoint(findPath.findShortestPath(DestinationNode_ID_Player, StartNode_ID_Fiend, preparationMap_ar_ar, wallObstacle, "manhattan", 10, 14));
 
-        if (pathList.Count==0)
+        if (pathList.Count == 0)
         {
             //new ModelSceneScr().GetModelSceneScr().PrintMapCard(preparationMap_ar_ar, (int)WaterCube.GetMoveCube().Y);
         }
@@ -908,7 +887,7 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
 
             if (itemCube.GetMoveCube().Y <= Yremove)
             {
-               // Debug.Log(itemCube.GetMoveCube().Y +" print id ="+ itemCube .Id+ " DeleteOutWorld" );
+                // Debug.Log(itemCube.GetMoveCube().Y +" print id ="+ itemCube .Id+ " DeleteOutWorld" );
                 removeKeyDestList.Add(itemCube);
 
             }
@@ -921,13 +900,13 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
     {
 
         FindPath findPath = new FindPath();
-        
+
 
         //_sizeWorld
         if (_modelSceneScr.AllowMoveCube((int)WaterCube.GetMoveCube().X, (int)WaterCube.GetMoveCube().Z))
         {
             List<Point> pathList = GetPathList(WaterCube, itemKeyEnd, findPath);
-            
+
 
             if (pathList.Count > 0)
             {
@@ -936,7 +915,7 @@ Key3D downCube = GetIdDownCube(hyperCubeItemCube);
             }
             else
             {
-       
+
                 //Debug.Log("NO PATH slave pathList.L= " + pathList.Count + " player One     Two Cube  x= " + itemKeyEnd.X + " z = " + itemKeyEnd.Z + "  PreparationMap L =");
             }
 
@@ -950,20 +929,20 @@ class ProductComparer : IEqualityComparer<Grid>
 {
     public bool Equals(Grid top, Grid down)
     {
-        if (top.SpotX== down.SpotX && top.SpotZ == down.SpotZ)
+        if (top.SpotX == down.SpotX && top.SpotZ == down.SpotZ)
         {
             if (down.Wall)
             {
                 return true;
             }
-            
+
         }
         return false;
     }
     public int GetHashCode(Grid product)
     {
-        
+
         return 0;
     }
-   
+
 }
