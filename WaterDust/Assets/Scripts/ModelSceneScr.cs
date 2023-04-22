@@ -13,7 +13,7 @@ public class ModelSceneScr
     public int Yremove = 1;//-3
     static ModelSceneScr _modelSceneScr = null;
     public bool RandomImpulse = false;
-    ModelList _cubeModelList;
+    public ModelList _cubeModelList;
     public static int ImpulseStart = 10;
     public bool PrintSteck;
     static int _floor = 2;
@@ -21,6 +21,9 @@ public class ModelSceneScr
     public AltitudeMap _altitudeMap;
     public AltitudeMap _waterAltitudeMap;
     System.Random rand = new System.Random();
+    List<Key3D> _removeKeyList;
+    public int[,] checkSide = new[,] { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
+
     public List<HyperCubeModel> GetHyperCubeClassList()
     {
         return new List<HyperCubeModel>(_hyperCubeClassList);
@@ -146,7 +149,7 @@ public class ModelSceneScr
                 //check left, right, forward, back
                 if (hyperCubeItemCube.GetImpulse() >= 0)
                 {
-                    Key3D keySide = GetCubeSpaceEmpty(hyperCubeItemCube, true);
+                    Key3D keySide = new CubeSpaceEmpty().GetCubeSpaceEmpty(hyperCubeItemCube, true,this);
                     if (keySide != new Key3D(hyperCubeItemCube.GetPointCube().X, hyperCubeItemCube.GetPointCube().Y, hyperCubeItemCube.GetPointCube().Z))
                     {
                         //Debug.Log("Move SideCube id =" + hyperCubeItemCube.Id + "  =[" + hyperCubeItemCube.GetMoveCube().X + "," + hyperCubeItemCube.GetMoveCube().Y + "," + hyperCubeItemCube.GetMoveCube().Z + "]==   ( x =" + keySide.X + " y=" + keySide.Y + " z=" + keySide.Z + " )===  =");
@@ -212,10 +215,9 @@ public class ModelSceneScr
                                     hyperCubeItemCube.TakeStone = true;
 
                                 }
-                                //_removeFlowDict.Add();
-                                ////RemoveCubeOutWorld();
+    
                                 break;
-                                //return;
+
                             }
                         }
                     }
@@ -237,7 +239,7 @@ public class ModelSceneScr
                     }
                     else
                     {
-                        // hyperCubeItemCube.ActiveStone = false;
+
                     }
                 }
             }
@@ -263,7 +265,7 @@ public class ModelSceneScr
 
     HyperCubeModel SetStoneRandom(HyperCubeModel hyperCubeItemCube)
     {
-        Key3D keySide = GetCubeSpaceEmpty(hyperCubeItemCube, true);
+        Key3D keySide = new CubeSpaceEmpty().GetCubeSpaceEmpty(hyperCubeItemCube, true,this);
 
         if (keySide == null)
         {
@@ -296,8 +298,7 @@ public class ModelSceneScr
     }
 
 
-    List<Key3D> _removeKeyList;
-    int[,] checkSide = new[,] { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
+    
     private Key3D GetIdDownCube(HyperCubeModel hyperCubeItemCube)
     {
         Key3D keyDown = new Key3D(hyperCubeItemCube.GetPointCube().X, hyperCubeItemCube.GetPointCube().Y - 1, hyperCubeItemCube.GetPointCube().Z);
@@ -448,7 +449,7 @@ public class ModelSceneScr
                             else
                             {
                                 // take side stone
-                                idRemoveCube = GetCubeSpaceEmpty(itemCubeValue, false);
+                                idRemoveCube = new CubeSpaceEmpty().GetCubeSpaceEmpty(itemCubeValue, false,this);
             
                                 Debug.Log(" Si  idRemoveCube =" + idRemoveCube + ", === x =");
 
@@ -557,7 +558,7 @@ public class ModelSceneScr
         return keySide;
 
     }
-
+    /*
     private Key3D GetCubeSpaceEmpty(HyperCubeModel hyperCubeItemCube, bool EmptyPlace)
     {
         //check left, right, forward, back
@@ -566,9 +567,11 @@ public class ModelSceneScr
         {
             Key3D keySide = new Key3D((hyperCubeItemCube.GetPointCube().X + checkSide[i, 0]), hyperCubeItemCube.GetPointCube().Y, (hyperCubeItemCube.GetPointCube().Z + checkSide[i, 1]));
 
-             if (0 > keySide.X)
+            if (0 > keySide.X)
             {
-                throw new Exception($"Error out index  keySide.X = {keySide.X}");
+                //  Запрет на просмотр выйдет за индекс
+                continue;
+                //throw new Exception($"= Error out index  keySide.X = {keySide.X}");
             }
             int sideCube;
             try
@@ -606,7 +609,7 @@ public class ModelSceneScr
         }
         return new Key3D(hyperCubeItemCube.GetPointCube().X, hyperCubeItemCube.GetPointCube().Y, hyperCubeItemCube.GetPointCube().Z);
     }
-
+    */
     private void RemoveCubeOutWorld()
     {
         List<HyperCubeModel> removeKeyDestList = DeleteOutWorld();
