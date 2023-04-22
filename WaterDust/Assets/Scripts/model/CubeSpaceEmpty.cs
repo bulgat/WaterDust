@@ -14,7 +14,7 @@ public class CubeSpaceEmpty
         {
             Key3D keySide = new Key3D((hyperCubeItemCube.GetPointCube().X + _modelSceneScr.checkSide[i, 0]), hyperCubeItemCube.GetPointCube().Y, (hyperCubeItemCube.GetPointCube().Z + _modelSceneScr.checkSide[i, 1]));
 
-            if (0 > keySide.X)
+            if (0 > keySide.X || 0 > keySide.Z || _modelSceneScr.SizeWorld<= keySide.X || _modelSceneScr.SizeWorld <= keySide.Z)
             {
                 //  Запрет на просмотр выйдет за индекс
                 continue;
