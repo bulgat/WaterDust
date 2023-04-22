@@ -53,28 +53,31 @@ public class ModelSceneScr
         _allCube_Dic = new Dictionary<Key3D, GameObject>(dictionarySpecialComparer);
         _cubeModelList.InitAllCube(_modelSceneScr.SizeWorld, _maxFloor, _modelSceneScr.SizeWorld);
 
-        for (int i = 0; i < 10; i++)
+        int xWidth = 10;
+        int zWidth = 10;
+
+        for (int x = 0; x < xWidth; x++)
         {
 
-            for (int z = 0; z < 10; z++)
+            for (int z = 0; z < zWidth; z++)
             {
                 for (int y = _floor; y < _maxFloor; y++)
                 {
                     bool water = false;
-                    if (y >= 2 + _floor && i != 0 && z != 0 && i != 9)
+                    if (y >= 2 + _floor && x != 0 && z != 0 && x != xWidth-1)
                     {
 
                         water = true;
                     }
 
-                    HyperCubeModel hyperCubeModel = GetNewCube(water, i, y, z);
+                    HyperCubeModel hyperCubeModel = GetNewCube(water, x, y, z);
 
                     // create water
 
 
                     _hyperCubeClassList.Add(hyperCubeModel);
 
-                    _cubeModelList.SetCube(hyperCubeModel.GetMoveCube().X, hyperCubeModel.GetMoveCube().Y, hyperCubeModel.GetMoveCube().Z, hyperCubeModel.Id);
+                    _cubeModelList.SetCube(hyperCubeModel.GetPointCube().X, hyperCubeModel.GetPointCube().Y, hyperCubeModel.GetPointCube().Z, hyperCubeModel.Id);
 
                 }
             }
@@ -144,7 +147,7 @@ public class ModelSceneScr
                 if (hyperCubeItemCube.GetImpulse() >= 0)
                 {
                     Key3D keySide = GetCubeSpaceEmpty(hyperCubeItemCube, true);
-                    if (keySide != null)
+                    if (keySide != new Key3D(hyperCubeItemCube.GetPointCube().X, hyperCubeItemCube.GetPointCube().Y, hyperCubeItemCube.GetPointCube().Z))
                     {
                         //Debug.Log("Move SideCube id =" + hyperCubeItemCube.Id + "  =[" + hyperCubeItemCube.GetMoveCube().X + "," + hyperCubeItemCube.GetMoveCube().Y + "," + hyperCubeItemCube.GetMoveCube().Z + "]==   ( x =" + keySide.X + " y=" + keySide.Y + " z=" + keySide.Z + " )===  =");
                         // Move
@@ -251,7 +254,7 @@ public class ModelSceneScr
         {
             _hyperCubeClassList.Add(itemHyperCubeModel);
 
-            _cubeModelList.SetCube(itemHyperCubeModel.GetMoveCube().X, itemHyperCubeModel.GetMoveCube().Y, itemHyperCubeModel.GetMoveCube().Z, itemHyperCubeModel.Id);
+            _cubeModelList.SetCube(itemHyperCubeModel.GetPointCube().X, itemHyperCubeModel.GetPointCube().Y, itemHyperCubeModel.GetPointCube().Z, itemHyperCubeModel.Id);
         }
 
         PrintSteckUpdate(PrintSteck);
@@ -297,7 +300,7 @@ public class ModelSceneScr
     int[,] checkSide = new[,] { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
     private Key3D GetIdDownCube(HyperCubeModel hyperCubeItemCube)
     {
-        Key3D keyDown = new Key3D(hyperCubeItemCube.GetMoveCube().X, hyperCubeItemCube.GetMoveCube().Y - 1, hyperCubeItemCube.GetMoveCube().Z);
+        Key3D keyDown = new Key3D(hyperCubeItemCube.GetPointCube().X, hyperCubeItemCube.GetPointCube().Y - 1, hyperCubeItemCube.GetPointCube().Z);
         // move down.
         return keyDown;
 
@@ -325,7 +328,7 @@ public class ModelSceneScr
         int downCubeId = _cubeModelList.GetCube(downCube.X, downCube.Y, downCube.Z);
 
 
-        Key3D keyDown = new Key3D(hyperCubeItemCube.GetMoveCube().X, hyperCubeItemCube.GetMoveCube().Y - 1, hyperCubeItemCube.GetMoveCube().Z);
+        Key3D keyDown = new Key3D(hyperCubeItemCube.GetPointCube().X, hyperCubeItemCube.GetPointCube().Y - 1, hyperCubeItemCube.GetPointCube().Z);
 
 
         if (downCubeId == 0)
@@ -379,9 +382,9 @@ public class ModelSceneScr
                     HyperCubeModel hyperCubeWater = GetCubeWithId(downCubeId);
                     if (hyperCubeWater.Water)
                     {
-                        Debug.Log("Stone   " + hyperCubeItemCube.Id + " id      downCube=  " + downCube + "  waterCube  y= " + hyperCubeItemCube.GetMoveCube().Y);
+                        Debug.Log("Stone   " + hyperCubeItemCube.Id + " id      downCube=  " + downCube + "  waterCube  y= " + hyperCubeItemCube.GetPointCube().Y);
 
-                        Key3D keyUpWater = new Key3D(hyperCubeItemCube.GetMoveCube().X, hyperCubeItemCube.GetMoveCube().Y, hyperCubeItemCube.GetMoveCube().Z);
+                        Key3D keyUpWater = new Key3D(hyperCubeItemCube.GetPointCube().X, hyperCubeItemCube.GetPointCube().Y, hyperCubeItemCube.GetPointCube().Z);
 
                         //water cube up
                         new MoveCubePhysicRealModel().MoveCubePhysicReal(_cubeModelList, hyperCubeWater, keyUpWater.X, keyUpWater.Y, keyUpWater.Z);
@@ -407,7 +410,7 @@ public class ModelSceneScr
 
     private Key3D MoveCubePathFind(HyperCubeModel itemCubeValue, List<HyperCubeModel> addHyperCubeModelList)
     {
-        Key3D itemCubeKey = itemCubeValue.GetMoveCube();
+        Key3D itemCubeKey = itemCubeValue.GetPointCube();
 
 
         // Move cube.
@@ -420,40 +423,35 @@ public class ModelSceneScr
                 {
                     itemCubeValue = new MoveCubePhysicRealModel().MoveCubePhysicReal(_cubeModelList, itemCubeValue,
                             itemCubeValue.PathList[0].X,
-                            itemCubeValue.GetMoveCube().Y,// .transform.position.y,
+                            itemCubeValue.GetPointCube().Y,// .transform.position.y,
                             itemCubeValue.PathList[0].Y);
 
                     itemCubeValue.PathList.RemoveAt(0);
-
-                    //SetColor(itemCubeValue, 0);
 
                     // Take Stone
                     if (itemCubeValue.TakeStone == false)
                     {
                         //random Take Stone
-                        //float randomNum = Mathf.Floor(UnityEngine.Random.Range(0f, 5.0f));
+    
                         float randomNum = rand.Next(0, 5);
                         if (randomNum == 0)
                         {
-                            //float randomSelectNum = Mathf.Floor(UnityEngine.Random.Range(0f, 2.0f));
+
                             float randomSelectNum = rand.Next(0,2);
                             Key3D idRemoveCube = null;
 
                             if (randomSelectNum == 0)
                             {
                                 idRemoveCube = GetIdDownCube(itemCubeValue);
-                                //idRemoveCube = _cubeModelList.GetCube(removeCubeKey3D.X, removeCubeKey3D.Y, removeCubeKey3D.Z);
+        
                             }
                             else
                             {
                                 // take side stone
                                 idRemoveCube = GetCubeSpaceEmpty(itemCubeValue, false);
-                                //if (keySide != null)
-                                //{
-                                //idRemoveCube = _cubeModelList.GetCube(keySide.X, keySide.Y, keySide.Z);
+            
                                 Debug.Log(" Si  idRemoveCube =" + idRemoveCube + ", === x =");
 
-                                //}
                             }
                             return idRemoveCube;
                         }
@@ -465,7 +463,7 @@ public class ModelSceneScr
                     if (itemCubeValue.TakeStone)
                     {
                         //Random cast stone
-                        //float randomNum = Mathf.Floor(UnityEngine.Random.Range(0f, 5.0f));
+
                         float randomNum = rand.Next(0,5);
                         if (randomNum == 0)
                         {
@@ -510,7 +508,7 @@ public class ModelSceneScr
 
             // flow random
             // big operation
-            keyRandom = GetRandomCube(WaterCube, WaterCube.GetMoveCube().Y);
+            keyRandom = GetRandomCube(WaterCube, WaterCube.GetPointCube().Y);
 
             nullCube = true;
         }
@@ -523,12 +521,12 @@ public class ModelSceneScr
         else
         {
             HyperCubeModel itemCubeCenterHyperCubeKey = itemCubeCenterKey;
-            itemCubeKey = itemCubeCenterHyperCubeKey.GetMoveCube();
+            itemCubeKey = itemCubeCenterHyperCubeKey.GetPointCube();
         }
 
         _modelSceneScr.GetCubeWithKey(itemCubeKey);
 
-        if (itemCubeKey != WaterCube.GetMoveCube())
+        if (itemCubeKey != WaterCube.GetPointCube())
         {
             if (nullCube == false)
             {
@@ -566,10 +564,22 @@ public class ModelSceneScr
 
         for (var i = 0; i < checkSide.Length / checkSide.Rank; i++)
         {
-            Key3D keySide = new Key3D((hyperCubeItemCube.GetMoveCube().X + checkSide[i, 0]), hyperCubeItemCube.GetMoveCube().Y, (hyperCubeItemCube.GetMoveCube().Z + checkSide[i, 1]));
+            Key3D keySide = new Key3D((hyperCubeItemCube.GetPointCube().X + checkSide[i, 0]), hyperCubeItemCube.GetPointCube().Y, (hyperCubeItemCube.GetPointCube().Z + checkSide[i, 1]));
 
-            var sideCube = _cubeModelList.GetCube(keySide.X, keySide.Y, keySide.Z);
-
+             if (0 > keySide.X)
+            {
+                throw new Exception($"Error out index  keySide.X = {keySide.X}");
+            }
+            int sideCube;
+            try
+            {
+                
+                sideCube = _cubeModelList.GetCube(keySide.X, keySide.Y, keySide.Z);
+            } catch (ApplicationException e)
+            {
+                Debug.LogWarning($"Error! x = {keySide.X} y={keySide.Y} z={keySide.Z}  error =  {e.Message} ");
+                throw;
+            }
             if (EmptyPlace)
             {
                 if (sideCube == 0)
@@ -594,7 +604,7 @@ public class ModelSceneScr
                 }
             }
         }
-        return null;
+        return new Key3D(hyperCubeItemCube.GetPointCube().X, hyperCubeItemCube.GetPointCube().Y, hyperCubeItemCube.GetPointCube().Z);
     }
 
     private void RemoveCubeOutWorld()
@@ -672,7 +682,7 @@ public class ModelSceneScr
     }
     public void RemoveCube(HyperCubeModel hyperCubeItemCube)
     {
-        _cubeModelList.SetCube(hyperCubeItemCube.GetMoveCube().X, hyperCubeItemCube.GetMoveCube().Y, hyperCubeItemCube.GetMoveCube().Z, 0);
+        _cubeModelList.SetCube(hyperCubeItemCube.GetPointCube().X, hyperCubeItemCube.GetPointCube().Y, hyperCubeItemCube.GetPointCube().Z, 0);
         _hyperCubeClassList.Remove(hyperCubeItemCube);
 
     }
@@ -680,7 +690,7 @@ public class ModelSceneScr
     {
         foreach (var hyperCubeItemCube in _hyperCubeClassList)
         {
-            if (hyperCubeItemCube.GetMoveCube().GetName() == HCube.GetName())
+            if (hyperCubeItemCube.GetPointCube().GetName() == HCube.GetName())
             {
                 return hyperCubeItemCube;
             }
@@ -767,7 +777,7 @@ public class ModelSceneScr
 
         foreach (Grid itemGrid in randomPlace_ar)
         {
-            float distance = Vector3.Distance(new Vector3(waterCube.GetMoveCube().X, waterCube.GetMoveCube().Y, waterCube.GetMoveCube().Z), new Vector3(itemGrid.SpotX, itemGrid.SpotY, itemGrid.SpotZ));
+            float distance = Vector3.Distance(new Vector3(waterCube.GetPointCube().X, waterCube.GetPointCube().Y, waterCube.GetPointCube().Z), new Vector3(itemGrid.SpotX, itemGrid.SpotY, itemGrid.SpotZ));
             if (distance < distanceStat)
             {
                 distanceCube_ar.Add(itemGrid);
@@ -828,11 +838,11 @@ public class ModelSceneScr
     }
     public List<Point> GetPathList(HyperCubeModel WaterCube, Key3D waterCubeEnd, FindPath findPath)
     {
-        long DestinationNode_ID_Player = ((int)(WaterCube.GetMoveCube().Z) * 100) + (int)(WaterCube.GetMoveCube().X);
+        long DestinationNode_ID_Player = ((int)(WaterCube.GetPointCube().Z) * 100) + (int)(WaterCube.GetPointCube().X);
         long StartNode_ID_Fiend = ((int)waterCubeEnd.Z * 100) + (int)waterCubeEnd.X;
 
         List<long[]> preparationMap_ar_ar = _modelSceneScr.GetPreparationMap(waterCubeEnd.Y);
-        preparationMap_ar_ar[(int)WaterCube.GetMoveCube().X][(int)WaterCube.GetMoveCube().Z] = 0;
+        preparationMap_ar_ar[(int)WaterCube.GetPointCube().X][(int)WaterCube.GetPointCube().Z] = 0;
         preparationMap_ar_ar[(int)waterCubeEnd.X][(int)waterCubeEnd.Z] = 0;
 
         int wallObstacle = 1;
@@ -872,7 +882,7 @@ public class ModelSceneScr
     {
         foreach (HyperCubeModel itemKey in _hyperCubeClassList)
         {
-            if (itemCubeKey == itemKey.GetMoveCube())
+            if (itemCubeKey == itemKey.GetPointCube())
             {
                 return itemKey;
             }
@@ -885,7 +895,7 @@ public class ModelSceneScr
         foreach (HyperCubeModel itemCube in _hyperCubeClassList)
         {
 
-            if (itemCube.GetMoveCube().Y <= Yremove)
+            if (itemCube.GetPointCube().Y <= Yremove)
             {
                 // Debug.Log(itemCube.GetMoveCube().Y +" print id ="+ itemCube .Id+ " DeleteOutWorld" );
                 removeKeyDestList.Add(itemCube);
@@ -903,7 +913,7 @@ public class ModelSceneScr
 
 
         //_sizeWorld
-        if (_modelSceneScr.AllowMoveCube((int)WaterCube.GetMoveCube().X, (int)WaterCube.GetMoveCube().Z))
+        if (_modelSceneScr.AllowMoveCube((int)WaterCube.GetPointCube().X, (int)WaterCube.GetPointCube().Z))
         {
             List<Point> pathList = GetPathList(WaterCube, itemKeyEnd, findPath);
 

@@ -18,7 +18,7 @@ public class HyperCubeModel
     {
         _key3DSide = keySideShift;
     }
-    public Key3D GetMoveCube()
+    public Key3D GetPointCube()
     {
         return _key3DSide;
     }

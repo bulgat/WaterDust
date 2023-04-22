@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class ModelList
 {
@@ -25,8 +26,18 @@ public class ModelList
     }
     public int GetCube(int X, int Y, int Z)
     {
+        int indexCube;
+        try
+        {
+            indexCube = _allCube_ar[X, Y, Z];
+        } catch (Exception e)
+        {
+            Debug.LogWarning($"Error index!  x = {X} y={Y} z={Z}  error =  {e.Message} ");
+            throw;
+        }
+
         //Debug.Log("  "+ X+","+Y+","+Z + " Cube   ****  = "+(_allDictionary_ar == null)+ "  Id = ");
-        return _allCube_ar[X, Y, Z];
+        return indexCube;
         /*
         if (_allDictionary_ar.ContainsKey(X + "_" + Y + "_" + Z)==false) {
             _allDictionary_ar[X + "_" + Y + "_" + Z] = 0;

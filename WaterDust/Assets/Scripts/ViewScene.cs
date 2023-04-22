@@ -29,7 +29,7 @@ public class ViewScene : MonoBehaviour
     {
         foreach (HyperCubeModel hyperCubeModel in _modelSceneScr.GetHyperCubeClassList())
         {
-            GameObject cube = Instantiate(GiperCube, new Vector3(hyperCubeModel.GetMoveCube().X, hyperCubeModel.GetMoveCube().Y, hyperCubeModel.GetMoveCube().Z), Quaternion.identity);
+            GameObject cube = Instantiate(GiperCube, new Vector3(hyperCubeModel.GetPointCube().X, hyperCubeModel.GetPointCube().Y, hyperCubeModel.GetPointCube().Z), Quaternion.identity);
             HyperCube hyperCube = cube.GetComponent<HyperCube>();
             if (hyperCubeModel.Water)
             {
