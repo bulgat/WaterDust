@@ -25,14 +25,16 @@ public class ViewMain3d : MonoBehaviour
     };
     int SizeMap = 29;
     Column LeakCube;
-    Point2D IndexFontain;
+    List<Point2D> IndexFontainList;
+    int FontainCount = 0;
+
     bool LeakWaterOn = true;
     int LeakWaterSum = 20;
 
     //private float nextActionTime = 0.0f;
     //public float period = 10000.1f;
     //55
-    int AlluviumRandom = 15;
+    int AlluviumRandom = 6;
     int PrecipitationMudRandom = 10;
 
     void Start()
@@ -48,11 +50,13 @@ public class ViewMain3d : MonoBehaviour
             Landscape_List.Add(xList);
 
         }
-        IndexFontain = new Point2D(SizeMap / 3 + 1, SizeMap / 3 + 5);
-        Debug.Log("Start  IndexFontain = " + IndexFontain.ToString());
+        IndexFontainList = new List<Point2D>() { new Point2D(SizeMap / 3 + 1, SizeMap / 3 + 5),
+        new Point2D(SizeMap - 6 , SizeMap -5)
+        };
+        Debug.Log("Start  IndexFont = "  );
 
         CreateIslandVulcan(SizeMap / 4, SizeMap / 4, SizeMap / 4, SizeMap / 2);
-        CreateIslandPlato(SizeMap / 2, SizeMap / 5, SizeMap - 1);
+        CreateIslandPlato(SizeMap / 2, SizeMap / 5, SizeMap);
 
 
         // Landscape_List[1][0] = new Column(12, 11);
@@ -165,7 +169,7 @@ public class ViewMain3d : MonoBehaviour
                 {
                     waterCube.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.cyan;
                 }
-                if (item.Key == IndexFontain.ToString())
+                if (IndexFontainList.Where(a=>a.ToString()== item.Key).Any())
                 {
                     waterCube.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.green;
                 }
@@ -220,11 +224,12 @@ public class ViewMain3d : MonoBehaviour
                         );
                         PrecipitationMud(checkColumn);
                         //перенос земли.
-                        if (AlluviumStone(item.Value))
-                        {
-                            checkColumn.Mud = true;
-                        }
-
+                       
+                            if (AlluviumStone(item.Value))
+                            {
+                                checkColumn.Mud = true;
+                            }
+                        
 
                         changeView = true;
 
@@ -236,10 +241,12 @@ public class ViewMain3d : MonoBehaviour
         {
             if (LeakWater())
             {
+                FontainCount=FontainCount++ >= IndexFontainList.Count ? FontainCount=0 : FontainCount;
                 Debug.Log("AddWater --------------------------");
-                LandscapeDictionary[IndexFontain.ToString()].DebugWater = true;
+                //LandscapeDictionary[IndexFontain.ToString()].DebugWater = true;
                 LeakCube.Water -= 1;
-                LandscapeDictionary[IndexFontain.ToString()].Water += 1;
+                LandscapeDictionary[IndexFontainList[FontainCount].ToString()].Water += 1;
+                
             }
         }
         foreach (var item in LandscapeDictionary)
@@ -250,14 +257,17 @@ public class ViewMain3d : MonoBehaviour
     }
     bool AlluviumStone(Column itemValue)
     {
-        if (itemValue.Water == 0)
+        if (itemValue.Mud == false)
         {
-            int rnd = Random.Range(0, AlluviumRandom);
-            if (0 == rnd)
+            if (1>=itemValue.Water)
             {
-                itemValue.Stone -= 1;
+                int rnd = Random.Range(0, AlluviumRandom);
+                if (0 == rnd)
+                {
+                    itemValue.Stone -= 1;
+                }
+                return true;
             }
-            return true;
         }
         return false;
     }
