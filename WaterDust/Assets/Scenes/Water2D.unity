@@ -132,7 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 351344466}
-  - component: {fileID: 351344467}
+  - component: {fileID: 351344468}
   m_Layer: 0
   m_Name: Script
   m_TagString: Untagged
@@ -154,7 +154,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &351344467
+--- !u!114 &351344468
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -163,7 +163,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 351344465}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63dddee4231a3884f8c39a5f0a1c52aa, type: 3}
+  m_Script: {fileID: 11500000, guid: 263e0b7075410624994cb533e59409eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   WaterColumn: {fileID: 1842136923507911848, guid: 179759df1238d164197ed8457ad4fd91,

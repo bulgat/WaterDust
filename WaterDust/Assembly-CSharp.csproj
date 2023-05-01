@@ -52,15 +52,15 @@
     <UnityVersion>2020.1.2f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Assets\Script2D\Point2D.cs" />
+    <Compile Include="Assets\Script2D\model\Point2D.cs" />
     <Compile Include="Assets\Scripts\model\CubeSpaceEmpty.cs" />
     <Compile Include="Assets\Scripts\model\HyperCubeModel.cs" />
     <Compile Include="Assets\Scripts\MoveCubePhysicRealModel.cs" />
     <Compile Include="Assets\Scripts\model\Point.cs" />
     <Compile Include="Assets\Scripts\DictionarySpecialComparer.cs" />
-    <Compile Include="Assets\Script2D\ViewMain3d.cs" />
+    <Compile Include="Assets\Script2D\model\ModelMain3d.cs" />
     <Compile Include="Assets\Scripts\model\StoneManager.cs" />
-    <Compile Include="Assets\Script2D\Column.cs" />
+    <Compile Include="Assets\Script2D\model\Column.cs" />
     <Compile Include="Assets\Scripts\model\ModelList.cs" />
     <Compile Include="Assets\Scripts\HyperCube.cs" />
     <Compile Include="Assets\Scripts\ViewScene.cs" />
@@ -71,9 +71,11 @@
     <Compile Include="Assets\Scripts\model\ModelSceneScr.cs" />
     <Compile Include="Assets\Scripts\model\SuperNode.cs" />
     <Compile Include="Assets\Scripts\model\Key3D.cs" />
-    <Compile Include="Assets\Script2D\WaterColumn.cs" />
+    <Compile Include="Assets\Script2D\View\WaterColumn.cs" />
     <Compile Include="Assets\Scripts\model\Grid.cs" />
     <Compile Include="Assets\Scripts\AltitudeMap.cs" />
+    <Compile Include="Assets\Script2D\View\ViewMain2D.cs" />
+    <Compile Include="Assets\Script2D\model\ParamModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
