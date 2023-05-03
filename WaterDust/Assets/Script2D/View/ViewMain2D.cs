@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using static UnityEditor.Progress;
 
 public class ViewMain2D : MonoBehaviour
 {
     public GameObject WaterColumn;
+    public GameObject Town;
+
     List<GameObject> GraphicList;
     int xStart = -3;
     int yStart = -3;
@@ -60,11 +63,25 @@ public class ViewMain2D : MonoBehaviour
                 {
                     waterCube.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.green;
                 }
+               
                 WaterColumn water = waterCube.transform.GetChild(0).GetComponent<WaterColumn>();
                 water.Name = item.Value.Position.ToString();
                 GraphicList.Add(waterCube);
+
+            }
+            if (item.Value.Town)
+            {
+                DrawnTown(item.Value);
             }
         }
+        
+    }
+    void DrawnTown(Column column)
+    {
+        //Column column = this.modelMain3d.LandscapeDictionary[this.modelMain3d.TownPlace.ToString()];
+        GameObject town = Instantiate(Town, new Vector3(xStart + this.modelMain3d.TownPlace.x,
+            yStart + column.Stone + (float)column.Water / 2, column.Position.z), Quaternion.identity);
+        GraphicList.Add(town);
     }
     void RemoveWater()
     {

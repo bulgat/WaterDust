@@ -7,6 +7,8 @@ public class Column
 {
     public int Stone { set; get; }
     public int Water { set; get; }
+    public bool Town { set; get; }
+
     public Point2D Position { set; get; }
     public Point2D VectorInertia { set; get; }
     public int VectorForce { set; get; }
