@@ -563,58 +563,7 @@ public class ModelSceneScr
         return keySide;
 
     }
-    /*
-    private Key3D GetCubeSpaceEmpty(HyperCubeModel hyperCubeItemCube, bool EmptyPlace)
-    {
-        //check left, right, forward, back
-
-        for (var i = 0; i < checkSide.Length / checkSide.Rank; i++)
-        {
-            Key3D keySide = new Key3D((hyperCubeItemCube.GetPointCube().X + checkSide[i, 0]), hyperCubeItemCube.GetPointCube().Y, (hyperCubeItemCube.GetPointCube().Z + checkSide[i, 1]));
-
-            if (0 > keySide.X)
-            {
-                //  Запрет на просмотр выйдет за индекс
-                continue;
-                //throw new Exception($"= Error out index  keySide.X = {keySide.X}");
-            }
-            int sideCube;
-            try
-            {
-                
-                sideCube = _cubeModelList.GetCube(keySide.X, keySide.Y, keySide.Z);
-            } catch (ApplicationException e)
-            {
-                Debug.LogWarning($"Error! x = {keySide.X} y={keySide.Y} z={keySide.Z}  error =  {e.Message} ");
-                throw;
-            }
-            if (EmptyPlace)
-            {
-                if (sideCube == 0)
-                {
-
-                    if (_modelSceneScr.AllowMoveCube(keySide.X, keySide.Z))
-                    {
-
-                        return keySide;
-
-                    }
-                }
-            }
-            else
-            {
-                if (sideCube > 0)
-                {
-                    if (_modelSceneScr.AllowMoveCube(keySide.X, keySide.Z))
-                    {
-                        return keySide;
-                    }
-                }
-            }
-        }
-        return new Key3D(hyperCubeItemCube.GetPointCube().X, hyperCubeItemCube.GetPointCube().Y, hyperCubeItemCube.GetPointCube().Z);
-    }
-    */
+    
     private void RemoveCubeOutWorld()
     {
         List<HyperCubeModel> removeKeyDestList = DeleteOutWorld();

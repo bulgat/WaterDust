@@ -103,14 +103,17 @@ public class FindPath
 								//otherwise, assign a cost of "14"
 								costPath = diagonalCost;
 							}
-							// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
+							// Map Altitude
+
+
+							
 							long kolGroundCost = map_ar[testRow][testColumn];
 							//kolGroundCost =1;
 							//costPath+=kolGroundCost;
 
 							//C. Calculate the costs (g, h and f)
 							//The node's current cost
-							long groundCost = centerNode.groundCost + costPath;
+							long groundCost = centerNode.GroundCost + costPath;
 							//The cost of travelling from this node to the
 							//destination node (the heuristic)
 							long hPathCost = 0;
@@ -180,8 +183,8 @@ public class FindPath
 								if (testNode.finalCost > finalCostSum)
 								{
 									testNode.finalCost = finalCostSum;
-									testNode.groundCost = groundCost;
-									testNode.hCost = hPathCost;
+									testNode.GroundCost = groundCost;
+									testNode.Hcost = hPathCost;
 									//Only change the parent if the new cost is lower
 									testNode.parent = centerNode;
 								}
@@ -189,8 +192,8 @@ public class FindPath
 							else
 							{
 								testNode.finalCost = finalCostSum;
-								testNode.groundCost = groundCost;
-								testNode.hCost = hPathCost;
+								testNode.GroundCost = groundCost;
+								testNode.Hcost = hPathCost;
 								testNode.parent = centerNode;
 								openList_ar.Add(testNode);
 							}
@@ -264,8 +267,8 @@ openList_ar.RemoveAt(0);
 				//values it will need to track
 				SuperNode superNode = new SuperNode();
 				superNode.finalCost = 0;
-				superNode.groundCost = 0;
-				superNode.hCost = 0;
+				superNode.GroundCost = 0;
+				superNode.Hcost = 0;
 				superNode.parent = null;
 				//Assign the row and column
 				superNode.row = row;

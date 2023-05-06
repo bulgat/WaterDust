@@ -82,6 +82,8 @@
     <Compile Include="Assets\Script2D\View\WaterColumn.cs" />
     <Compile Include="Assets\Scripts\model\Grid.cs" />
     <Compile Include="Assets\Scripts\AltitudeMap.cs" />
+    <Compile Include="Assets\Script2D\model\PreparationFindPath.cs" />
+    <Compile Include="Assets\Scripts\model\FindPathAltitude.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

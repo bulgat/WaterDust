@@ -68,7 +68,30 @@ public class ModelMain3d
         DeployTown();
         DeployTree();
         DeployUnit();
+
+        //new PreparationFindPath().GetPreparationMap(LandscapeDictionary, SizeMap);
+        TestPath();
     }
+    void TestPath()
+    {
+        FindPathAltitude findPath = new FindPathAltitude();
+
+        long DestinationNode_ID_Player = ((int)(2) * 100) + (int)(1);
+        long StartNode_ID_Fiend = ((int)2 * 100) + (int)2;
+
+        List<long[]> preparationMap_ar_ar = new PreparationFindPath().GetPreparationMap( 3);
+        List<long[]> preparationMapAltitude_ar = new PreparationFindPath().GetPreparationMap(3);
+        preparationMapAltitude_ar[2][2] = 2;
+        preparationMapAltitude_ar[2][1] = 2;
+        preparationMapAltitude_ar[2][0] = 1;
+        //preparationMap_ar_ar[(int)WaterCube.GetPointCube().X][(int)WaterCube.GetPointCube().Z] = 0;
+        //preparationMap_ar_ar[(int)waterCubeEnd.X][(int)waterCubeEnd.Z] = 0;
+        Debug.Log( "Add ------" + preparationMap_ar_ar + "---------------"  );
+        int wallObstacle = 1;
+        var kol = findPath.findShortestPath(DestinationNode_ID_Player, StartNode_ID_Fiend, preparationMap_ar_ar, preparationMapAltitude_ar, wallObstacle, "manhattan", 10, 14);
+        Debug.Log("kol = "+kol.Count);
+     }
+
     void DeployTown()
     {
         List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a=>a.Value.Water==0).ToList();
@@ -172,7 +195,7 @@ public class ModelMain3d
 
                 //LandscapeDictionary[IndexFontain.ToString()].DebugWater = true;
                 leakEvaporation.LeakCube.Water -= 1;
-Debug.Log(FontainCount+"AddWa -------"+ IndexFontainList .Count+ "---------------" + changeView);
+
                 LandscapeDictionary[IndexFontainList[FontainCount].ToString()].Water += 1;
                 
             }
