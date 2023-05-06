@@ -169,6 +169,7 @@ MonoBehaviour:
   WaterColumn: {fileID: 1842136923507911848, guid: 179759df1238d164197ed8457ad4fd91,
     type: 3}
   Town: {fileID: 1715093071371381979, guid: 39843d39fc6254344bce9262e873e3d1, type: 3}
+  Tree: {fileID: 4022907354592349115, guid: 07610651d83c09940b47a28af3a77585, type: 3}
 --- !u!1 &1972930084
 GameObject:
   m_ObjectHideFlags: 0

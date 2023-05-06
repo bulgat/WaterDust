@@ -66,18 +66,35 @@ public class ModelMain3d
         //DrawWater();
         // /Task kol = new Task();
         DeployTown();
+        DeployTree();
     }
     void DeployTown()
     {
-        var openColumnList = LandscapeDictionary.Where(a=>a.Value.Water==0).ToList();
-        int rnd = UnityEngine.Random.Range(0, openColumnList.Count);
-        Debug.Log("Start  IndexF  = "+ openColumnList[rnd].Value.Position.ToString());
-        TownPlace = openColumnList[rnd].Value.Position;
-        Column column = this.LandscapeDictionary[this.TownPlace.ToString()];
+        List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a=>a.Value.Water==0).ToList();
+       // int rnd = UnityEngine.Random.Range(0, openColumnList.Count);
+        //Debug.Log("Start  IndexF  = "+ openColumnList[rnd].Value.Position.ToString());
+        //TownPlace = openColumnList[rnd].Value.Position;
+        //Column column = this.LandscapeDictionary[this.TownPlace.ToString()];
+        Column column = GetRandomColumn(openColumnList);
         column.Town = true;
     }
-    
-    
+
+    void DeployTree()
+    {
+        List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a => a.Value.Water == 0 && a.Value.Town == false).ToList();
+        //int rnd = UnityEngine.Random.Range(0, openColumnList.Count);
+        //TownPlace = openColumnList[rnd].Value.Position;
+        Column column = GetRandomColumn(openColumnList);
+        column.Tree = true;
+    }
+    Column GetRandomColumn(List<KeyValuePair<string, Column>> openColumnList)
+    {
+        int rnd = UnityEngine.Random.Range(0, openColumnList.Count);
+        TownPlace = openColumnList[rnd].Value.Position;
+        Column column = this.LandscapeDictionary[this.TownPlace.ToString()];
+        return column;
+    }
+
 
     public bool StepUpdateModel()
     {
@@ -125,8 +142,11 @@ public class ModelMain3d
                             checkColumn.Town = false;
                             this.DeployTown();
                         }
-
-                        changeView = true;
+                        if (checkColumn.Tree)
+                        {
+                            checkColumn.Tree = false;
+                        }
+                            changeView = true;
 
                     }
                 }

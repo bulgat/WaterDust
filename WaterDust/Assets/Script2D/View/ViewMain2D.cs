@@ -8,6 +8,7 @@ public class ViewMain2D : MonoBehaviour
 {
     public GameObject WaterColumn;
     public GameObject Town;
+    public GameObject Tree;
 
     List<GameObject> GraphicList;
     int xStart = -3;
@@ -71,18 +72,23 @@ public class ViewMain2D : MonoBehaviour
             }
             if (item.Value.Town)
             {
-                DrawnTown(item.Value);
+                DrawnTownTree(item.Value, Town);
+            }
+            if (item.Value.Tree)
+            {
+                DrawnTownTree(item.Value, Tree);
             }
         }
         
     }
-    void DrawnTown(Column column)
+    void DrawnTownTree(Column column, GameObject TownPrefabs)
     {
         //Column column = this.modelMain3d.LandscapeDictionary[this.modelMain3d.TownPlace.ToString()];
-        GameObject town = Instantiate(Town, new Vector3(xStart + this.modelMain3d.TownPlace.x,
+        GameObject townTree = Instantiate(TownPrefabs, new Vector3(xStart + this.modelMain3d.TownPlace.x,
             yStart + column.Stone + (float)column.Water / 2, column.Position.z), Quaternion.identity);
-        GraphicList.Add(town);
+        GraphicList.Add(townTree);
     }
+
     void RemoveWater()
     {
         foreach (var item in GraphicList)
