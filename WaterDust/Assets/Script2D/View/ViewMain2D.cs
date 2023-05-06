@@ -9,6 +9,7 @@ public class ViewMain2D : MonoBehaviour
     public GameObject WaterColumn;
     public GameObject Town;
     public GameObject Tree;
+    public GameObject Unit;
 
     List<GameObject> GraphicList;
     int xStart = -3;
@@ -77,6 +78,10 @@ public class ViewMain2D : MonoBehaviour
             if (item.Value.Tree)
             {
                 DrawnTownTree(item.Value, Tree);
+            }
+            if (item.Value.Unit)
+            {
+                DrawnTownTree(item.Value, Unit);
             }
         }
         

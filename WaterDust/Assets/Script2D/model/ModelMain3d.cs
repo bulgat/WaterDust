@@ -67,6 +67,7 @@ public class ModelMain3d
         // /Task kol = new Task();
         DeployTown();
         DeployTree();
+        DeployUnit();
     }
     void DeployTown()
     {
@@ -86,6 +87,12 @@ public class ModelMain3d
         //TownPlace = openColumnList[rnd].Value.Position;
         Column column = GetRandomColumn(openColumnList);
         column.Tree = true;
+    }
+    void DeployUnit()
+    {
+        List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a => a.Value.Water == 0 && a.Value.Town == false && a.Value.Tree == false).ToList();
+        Column column = GetRandomColumn(openColumnList);
+        column.Unit = true;
     }
     Column GetRandomColumn(List<KeyValuePair<string, Column>> openColumnList)
     {
@@ -146,7 +153,11 @@ public class ModelMain3d
                         {
                             checkColumn.Tree = false;
                         }
-                            changeView = true;
+                        if (checkColumn.Unit)
+                        {
+                            checkColumn.Unit = false;
+                        }
+                        changeView = true;
 
                     }
                 }

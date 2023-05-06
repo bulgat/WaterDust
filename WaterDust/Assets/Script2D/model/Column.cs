@@ -10,6 +10,7 @@ public class Column
     public bool Town { set; get; }
 
     public bool Tree { set; get; }
+    public bool Unit { set; get; }
     public Point2D Position { set; get; }
     public Point2D VectorInertia { set; get; }
     public int VectorForce { set; get; }
