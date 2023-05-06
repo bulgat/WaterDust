@@ -62,7 +62,9 @@
     <Compile Include="Assets\Script2D\model\ModelMain3d.cs" />
     <Compile Include="Assets\Scripts\model\StoneManager.cs" />
     <Compile Include="Assets\Script2D\model\Column.cs" />
+    <Compile Include="Assets\Script2D\model\altitudePath\PreparationFindPath.cs" />
     <Compile Include="Assets\Scripts\model\ModelList.cs" />
+    <Compile Include="Assets\Script2D\model\altitudePath\FindPathAltitude.cs" />
     <Compile Include="Assets\Scripts\HyperCube.cs" />
     <Compile Include="Assets\Script2D\model\AlluviumPrecipitation.cs" />
     <Compile Include="Assets\Scripts\ViewScene.cs" />
@@ -82,8 +84,6 @@
     <Compile Include="Assets\Script2D\View\WaterColumn.cs" />
     <Compile Include="Assets\Scripts\model\Grid.cs" />
     <Compile Include="Assets\Scripts\AltitudeMap.cs" />
-    <Compile Include="Assets\Script2D\model\PreparationFindPath.cs" />
-    <Compile Include="Assets\Scripts\model\FindPathAltitude.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

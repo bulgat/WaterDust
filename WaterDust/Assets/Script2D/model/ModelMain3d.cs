@@ -76,8 +76,10 @@ public class ModelMain3d
     {
         FindPathAltitude findPath = new FindPathAltitude();
 
-        long DestinationNode_ID_Player = ((int)(2) * 100) + (int)(1);
-        long StartNode_ID_Fiend = ((int)2 * 100) + (int)2;
+        //long DestinationNode_ID_Player = ((int)(2) * 100) + (int)(1);
+        Point2D DestinationNode_ID_Player = new Point2D(1,2);
+        //long StartNode_ID_Fiend = ((int)2 * 100) + (int)2;
+        Point2D StartNode_ID_Fiend = new Point2D(2, 2);
 
         List<long[]> preparationMap_ar_ar = new PreparationFindPath().GetPreparationMap( 3);
         List<long[]> preparationMapAltitude_ar = new PreparationFindPath().GetPreparationMap(3);
@@ -86,10 +88,14 @@ public class ModelMain3d
         preparationMapAltitude_ar[2][0] = 1;
         //preparationMap_ar_ar[(int)WaterCube.GetPointCube().X][(int)WaterCube.GetPointCube().Z] = 0;
         //preparationMap_ar_ar[(int)waterCubeEnd.X][(int)waterCubeEnd.Z] = 0;
-        Debug.Log( "Add ------" + preparationMap_ar_ar + "---------------"  );
+        
         int wallObstacle = 1;
-        var kol = findPath.findShortestPath(DestinationNode_ID_Player, StartNode_ID_Fiend, preparationMap_ar_ar, preparationMapAltitude_ar, wallObstacle, "manhattan", 10, 14);
-        Debug.Log("kol = "+kol.Count);
+        List<SuperNode> kol = findPath.findShortestPath(DestinationNode_ID_Player, StartNode_ID_Fiend, preparationMap_ar_ar, preparationMapAltitude_ar, wallObstacle, "manhattan", 10, 14);
+        Debug.Log("========kol = "+kol.Count);
+        foreach(var item in kol)
+        {
+Debug.Log( "Ad -----" + item.ToString() + "---------------"  );
+        }
      }
 
     void DeployTown()

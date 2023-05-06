@@ -11,4 +11,9 @@ public class SuperNode
 	public int row;
 	public int column;
 	public int id;
+    public override string ToString()
+    {
+        return row+"_"+column;
+    }
+
 }
