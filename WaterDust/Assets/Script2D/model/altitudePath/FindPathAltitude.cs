@@ -92,10 +92,10 @@ public class FindPathAltitude
 
 							SuperNode testNode = nodeMap_ar[testRow][testColumn];
 
-							Debug.Log("Find = ["+centerNode.row+"  t= "+testNode.row+" ]  ["+ centerNode.column+ "  t = "+ testNode.column+"]"
-								+"  altitude = "+ mapAltitude_ar[centerNode.row][centerNode.column]
-								+ " test altitude = " + mapAltitude_ar[testNode.row][testNode.column]
-								);
+							//Debug.Log("Find = ["+centerNode.row+"  t= "+testNode.row+" ]  ["+ centerNode.column+ "  t = "+ testNode.column+"]"
+								//+"  altitude = "+ mapAltitude_ar[centerNode.row][centerNode.column]
+								//+ " test altitude = " + mapAltitude_ar[testNode.row][testNode.column]
+								//);
 
 							//Find out whether the node is on a straight axis or
 							//a diagonal axis, and assign the appropriate cost

@@ -9,6 +9,7 @@ public class ModelMain3d
 {
     //public GameObject WaterColumn;
     public Point2D TownPlace;
+    UnitModel UnitPlace;
 
     List<List<Column>> Landscape_List;
     public Dictionary<string, Column> LandscapeDictionary;
@@ -18,11 +19,12 @@ public class ModelMain3d
     int SizeMap = 0;
     public List<Point2D> IndexFontainList;
     int FontainCount = 0;
-
+    
 
 
     public void Start()
     {
+        this.UnitPlace = new UnitModel();
         //ParamModel;
         SizeMap = ParamModel.SizeMap;
         Landscape_List = new List<List<Column>>();
@@ -64,12 +66,11 @@ public class ModelMain3d
         }
         GraphicList = new List<GameObject>();
         //DrawWater();
-        // /Task kol = new Task();
+ 
         DeployTown();
         DeployTree();
         DeployUnit();
 
-        //new PreparationFindPath().GetPreparationMap(LandscapeDictionary, SizeMap);
         TestPath();
     }
     void TestPath()
@@ -77,36 +78,39 @@ public class ModelMain3d
         FindPathAltitude findPath = new FindPathAltitude();
 
         //long DestinationNode_ID_Player = ((int)(2) * 100) + (int)(1);
-        Point2D DestinationNode_ID_Player = new Point2D(1,2);
+        //Point2D DestinationNode_ID_Player = new Point2D(1,2);
+        Point2D DestinationNode_Player = UnitPlace.Position;
         //long StartNode_ID_Fiend = ((int)2 * 100) + (int)2;
-        Point2D StartNode_ID_Fiend = new Point2D(2, 2);
+        //Point2D StartNode_ID_Fiend = new Point2D(2, 2);
+        Point2D StartNode_Fiend = TownPlace;
 
-        List<long[]> preparationMap_ar_ar = new PreparationFindPath().GetPreparationMap( 3);
-        List<long[]> preparationMapAltitude_ar = new PreparationFindPath().GetPreparationMap(3);
-        preparationMapAltitude_ar[2][2] = 2;
-        preparationMapAltitude_ar[2][1] = 2;
-        preparationMapAltitude_ar[2][0] = 1;
+        List<long[]> preparationMap_ar_ar = new PreparationFindPath().GetPreparationMap(LandscapeDictionary,SizeMap);
+        List<long[]> preparationMapAltitude_ar = new PreparationFindPath().GetPreparationAltitudeMap(LandscapeDictionary,SizeMap);
+        //preparationMapAltitude_ar[2][2] = 2;
+        //preparationMapAltitude_ar[2][1] = 2;
+        //preparationMapAltitude_ar[2][0] = 1;
         //preparationMap_ar_ar[(int)WaterCube.GetPointCube().X][(int)WaterCube.GetPointCube().Z] = 0;
         //preparationMap_ar_ar[(int)waterCubeEnd.X][(int)waterCubeEnd.Z] = 0;
-        
+        //new PreparationFindPath().PrintMap(preparationMap_ar_ar, SizeMap);
+        //new PreparationFindPath().PrintMap(preparationMapAltitude_ar, SizeMap);
+
         int wallObstacle = 1;
-        List<SuperNode> kol = findPath.findShortestPath(DestinationNode_ID_Player, StartNode_ID_Fiend, preparationMap_ar_ar, preparationMapAltitude_ar, wallObstacle, "manhattan", 10, 14);
-        Debug.Log("========kol = "+kol.Count);
-        foreach(var item in kol)
+        UnitPlace.Path = findPath.findShortestPath(DestinationNode_Player, StartNode_Fiend,
+            preparationMap_ar_ar, preparationMapAltitude_ar, wallObstacle, "manhattan", 10, 14);
+        Debug.Log(DestinationNode_Player.ToString()+" ==== "+ StartNode_Fiend .ToString()+ " ====ko  = " + UnitPlace.Path.Count);
+        foreach(var item in UnitPlace.Path)
         {
-Debug.Log( "Ad -----" + item.ToString() + "---------------"  );
+            Debug.Log( "Ad -----" + item.ToString() + "---------------"  );
         }
      }
 
     void DeployTown()
     {
         List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a=>a.Value.Water==0).ToList();
-       // int rnd = UnityEngine.Random.Range(0, openColumnList.Count);
-        //Debug.Log("Start  IndexF  = "+ openColumnList[rnd].Value.Position.ToString());
-        //TownPlace = openColumnList[rnd].Value.Position;
-        //Column column = this.LandscapeDictionary[this.TownPlace.ToString()];
+ 
         Column column = GetRandomColumn(openColumnList);
         column.Town = true;
+        TownPlace = column.Position;
     }
 
     void DeployTree()
@@ -120,14 +124,16 @@ Debug.Log( "Ad -----" + item.ToString() + "---------------"  );
     void DeployUnit()
     {
         List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a => a.Value.Water == 0 && a.Value.Town == false && a.Value.Tree == false).ToList();
+        
         Column column = GetRandomColumn(openColumnList);
         column.Unit = true;
+        UnitPlace.Position = column.Position;
     }
     Column GetRandomColumn(List<KeyValuePair<string, Column>> openColumnList)
     {
         int rnd = UnityEngine.Random.Range(0, openColumnList.Count);
-        TownPlace = openColumnList[rnd].Value.Position;
-        Column column = this.LandscapeDictionary[this.TownPlace.ToString()];
+        var placeRnd = openColumnList[rnd].Value.Position;
+        Column column = this.LandscapeDictionary[placeRnd.ToString()];
         return column;
     }
 
@@ -186,6 +192,10 @@ Debug.Log( "Ad -----" + item.ToString() + "---------------"  );
                         {
                             checkColumn.Unit = false;
                         }
+                        var unitPoint = UnitPlace.GetNextPath();
+                        Column column = LandscapeDictionary[unitPoint.ToString()];
+                        column.Unit = true;
+
                         changeView = true;
 
                     }
