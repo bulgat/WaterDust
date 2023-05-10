@@ -4,6 +4,9 @@ using UnityEngine;
 using System.Linq;
 using Assets.Script2D;
 using Assets.Script2D.model;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using System.Threading;
 
 public class ModelMain3d 
 {
@@ -72,6 +75,34 @@ public class ModelMain3d
         DeployUnit();
 
         TestPath();
+
+        System.Diagnostics.Debug.WriteLine("000 Start--------------");
+        
+        Task taskUpdateLandscape = Task.Factory.StartNew(()=> {
+            UnityEngine.Debug.Log("0001  --- ---------------");
+            while (true)
+            {
+                UnityEngine.Debug.Log("  0002 ---------------");
+                Thread.Sleep(100);
+                UnityEngine.Debug.Log("  0003------------");
+                StepUpdateModel();
+                UnityEngine.Debug.Log("  0004 ---------");
+            }
+        });
+        /*
+        Task t = new Task(()=> {
+            System.Diagnostics.Debug.WriteLine("0010  --- ---------------");
+            UnityEngine.Debug.Log("0000000000");
+            while (true)
+            {
+                UnityEngine.Debug.Log("1111000000");
+                //StepUpdateModel();
+                System.Diagnostics.Debug.WriteLine("0011 --- ---------------");
+            }
+        });
+        t.Start();
+        */
+        //taskUpdateLandscape.Start();
     }
     void TestPath()
     {
@@ -97,10 +128,10 @@ public class ModelMain3d
         int wallObstacle = 1;
         UnitPlace.Path = findPath.findShortestPath(DestinationNode_Player, StartNode_Fiend,
             preparationMap_ar_ar, preparationMapAltitude_ar, wallObstacle, "manhattan", 10, 14);
-        Debug.Log(DestinationNode_Player.ToString()+" ==== "+ StartNode_Fiend .ToString()+ " ====ko  = " + UnitPlace.Path.Count);
+        System.Diagnostics.Debug.WriteLine(DestinationNode_Player.ToString()+" ==== "+ StartNode_Fiend .ToString()+ " ====ko  = " + UnitPlace.Path.Count);
         foreach(var item in UnitPlace.Path)
         {
-            Debug.Log( "Ad -----" + item.ToString() + "---------------"  );
+            System.Diagnostics.Debug.WriteLine( "Ad -----" + item.ToString() + "---------------"  );
         }
      }
 
@@ -131,16 +162,18 @@ public class ModelMain3d
     }
     Column GetRandomColumn(List<KeyValuePair<string, Column>> openColumnList)
     {
-        int rnd = UnityEngine.Random.Range(0, openColumnList.Count);
+        var rand = new System.Random();
+        //int rnd = UnityEngine.Random.Range(0, openColumnList.Count);
+        int rnd = rand.Next(0, openColumnList.Count);
         var placeRnd = openColumnList[rnd].Value.Position;
         Column column = this.LandscapeDictionary[placeRnd.ToString()];
         return column;
     }
+    public bool changeView = false;
 
-
-    public bool StepUpdateModel()
+    public void StepUpdateModel()
     {
-        bool changeView = false;
+        
         foreach (var item in LandscapeDictionary)
         {
             if (item.Value.Water > 0)
@@ -192,9 +225,7 @@ public class ModelMain3d
                         {
                             checkColumn.Unit = false;
                         }
-                        var unitPoint = UnitPlace.GetNextPath();
-                        Column column = LandscapeDictionary[unitPoint.ToString()];
-                        column.Unit = true;
+                        
 
                         changeView = true;
 
@@ -202,12 +233,24 @@ public class ModelMain3d
                 }
             }
         }
+        
+        if (changeView)
+        {
+            var unitPoint = UnitPlace.GetNextPath();
+            Column column = LandscapeDictionary[unitPoint.ToString()];
+            column.Unit = true;
+        }
+        
         if (ParamModel.LeakWaterOn)
         {
+
             LeakEvaporation leakEvaporation = new LeakEvaporation();
+UnityEngine.Debug.Log(LandscapeDictionary+"  0005555 -------" + leakEvaporation);
             if (leakEvaporation.LeakWater(LandscapeDictionary))
             {
-                FontainCount=++FontainCount >= IndexFontainList.Count ? FontainCount=0 : FontainCount;
+                UnityEngine.Debug.Log("  0006666-----" );
+                FontainCount++;
+                FontainCount = FontainCount >= IndexFontainList.Count ? 0 : FontainCount;
 
                 //LandscapeDictionary[IndexFontain.ToString()].DebugWater = true;
                 leakEvaporation.LeakCube.Water -= 1;
@@ -216,12 +259,14 @@ public class ModelMain3d
                 
             }
         }
+        
+
         foreach (var item in LandscapeDictionary)
         {
             item.Value.TurnMove = false;
         }
-        
-        return changeView;
+        UnityEngine.Debug.Log("  0007777---");
+        //return changeView;
     }
 
 }

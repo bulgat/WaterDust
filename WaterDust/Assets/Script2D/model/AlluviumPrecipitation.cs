@@ -15,7 +15,9 @@ namespace Assets.Script2D.model
             {
                 if (1 >= itemValue.Water)
                 {
-                    int rnd = UnityEngine.Random.Range(0, ParamModel.AlluviumRandom);
+                    var rand = new System.Random();
+                    //int rnd = UnityEngine.Random.Range(0, ParamModel.AlluviumRandom);
+                    int rnd = rand.Next(0, ParamModel.AlluviumRandom);
                     if (0 == rnd)
                     {
                         itemValue.Stone -= 1;
@@ -31,8 +33,9 @@ namespace Assets.Script2D.model
             {
                 if (checkColumn.Water > 2)
                 {
-
-                    int rnd = UnityEngine.Random.Range(0, ParamModel.PrecipitationMudRandom);
+                    var rand = new System.Random();
+                    //int rnd = UnityEngine.Random.Range(0, ParamModel.PrecipitationMudRandom);
+                    int rnd = rand.Next(0, ParamModel.PrecipitationMudRandom);
                     if (0 == rnd)
                     {
                         checkColumn.Stone += 1;

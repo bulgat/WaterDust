@@ -117,7 +117,7 @@ public class FindPathAltitude
 							// Map Altitude
 							if(Math.Abs(mapAltitude_ar[centerNode.row][centerNode.column]- mapAltitude_ar[testNode.row][testNode.column]) >= 2)
                             {
-								Debug.Log("Altitude");
+								//Debug.Log("Altitude");
 								costPath = 1000;
 
 							}

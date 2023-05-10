@@ -12,13 +12,18 @@ namespace Assets.Script2D.model
         public Column LeakCube;
         public bool LeakWater(Dictionary<string, Column> LandscapeDictionary)
         {
+            
+            int sumWater = LandscapeDictionary.Values.ToList().Sum(a => a.Water);
 
-            var sumWater = LandscapeDictionary.Values.ToList().Sum(a => a.Water);
             if (ParamModel.LeakWaterSum < sumWater)
             {
 
-                var list = LandscapeDictionary.Values.Where(a => a.Water > 0).OrderBy(a => a.Stone).OrderByDescending(a => a.Water).ToList();
-                int rnd = UnityEngine.Random.Range(0, list.Count);
+                List<Column> list = LandscapeDictionary.Values.Where(a => a.Water > 0).OrderBy(a => a.Stone).OrderByDescending(a => a.Water).ToList();
+
+                var rand = new System.Random();
+                // int rnd = UnityEngine.Random.Range(0, list.Count);
+                int rnd = rand.Next(0, list.Count);
+                
                 LeakCube = list[rnd];
                 return true;
             }

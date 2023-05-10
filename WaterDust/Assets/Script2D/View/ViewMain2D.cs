@@ -26,10 +26,12 @@ public class ViewMain2D : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (this.modelMain3d.StepUpdateModel())
+       // if (this.modelMain3d.StepUpdateModel())
+        if (this.modelMain3d.changeView)
         {
             RemoveWater();
             DrawWater();
+            this.modelMain3d.changeView = false;
         }
     }
     void DrawWater()

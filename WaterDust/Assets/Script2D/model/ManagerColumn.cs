@@ -23,11 +23,14 @@ namespace Assets.Script2D.model
                     }
                 }
             }
-
-            if (0 == UnityEngine.Random.Range(0, 12))
+            var rand = new System.Random();
+            //UnityEngine.Random.Range(0, 12)
+            int rnd = rand.Next(0, 12);
+            if (0 == rnd)
             {
-                int rnd = UnityEngine.Random.Range(0, gradeList.Count);
-                return gradeList[rnd];
+                //int rnd = UnityEngine.Random.Range(0, gradeList.Count);
+                int rndList = rand.Next(0, gradeList.Count);
+                return gradeList[rndList];
             }
             return gradeList.First();
         }

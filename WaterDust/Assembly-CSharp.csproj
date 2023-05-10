@@ -52,6 +52,9 @@
     <UnityVersion>2020.1.2f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Assets\Script2D\View\ViewMain2D.cs" />
     <Compile Include="Assets\Script2D\model\Point2D.cs" />
     <Compile Include="Assets\Scripts\model\CubeSpaceEmpty.cs" />
@@ -65,6 +68,7 @@
     <Compile Include="Assets\Script2D\model\altitudePath\PreparationFindPath.cs" />
     <Compile Include="Assets\Scripts\model\ModelList.cs" />
     <Compile Include="Assets\Script2D\model\altitudePath\FindPathAltitude.cs" />
+    <Compile Include="Assets\Script2D\model\UnitModel.cs" />
     <Compile Include="Assets\Scripts\HyperCube.cs" />
     <Compile Include="Assets\Script2D\model\AlluviumPrecipitation.cs" />
     <Compile Include="Assets\Scripts\ViewScene.cs" />
@@ -84,7 +88,6 @@
     <Compile Include="Assets\Script2D\View\WaterColumn.cs" />
     <Compile Include="Assets\Scripts\model\Grid.cs" />
     <Compile Include="Assets\Scripts\AltitudeMap.cs" />
-    <Compile Include="Assets\Script2D\model\UnitModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
