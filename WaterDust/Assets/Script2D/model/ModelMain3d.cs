@@ -11,7 +11,9 @@ using System.Threading;
 public class ModelMain3d 
 {
     //public GameObject WaterColumn;
-    public Point2D TownPlace;
+
+    //public List<Point2D> TownPlaceList;
+    public TownManager townManager;
     UnitModel UnitPlace;
 
     List<List<Column>> Landscape_List;
@@ -27,6 +29,7 @@ public class ModelMain3d
 
     public void Start()
     {
+        this.townManager = new TownManager();
         this.UnitPlace = new UnitModel();
         //ParamModel;
         SizeMap = ParamModel.SizeMap;
@@ -70,7 +73,7 @@ public class ModelMain3d
         GraphicList = new List<GameObject>();
         //DrawWater();
  
-        DeployTown();
+        this.townManager.DeployTownList(LandscapeDictionary,2);
         DeployTree();
         DeployUnit();
 
@@ -113,7 +116,7 @@ public class ModelMain3d
         Point2D DestinationNode_Player = UnitPlace.Position;
         //long StartNode_ID_Fiend = ((int)2 * 100) + (int)2;
         //Point2D StartNode_ID_Fiend = new Point2D(2, 2);
-        Point2D StartNode_Fiend = TownPlace;
+        Point2D StartNode_Fiend = this.townManager.TownPlaceList[0];
 
         List<long[]> preparationMap_ar_ar = new PreparationFindPath().GetPreparationMap(LandscapeDictionary,SizeMap);
         List<long[]> preparationMapAltitude_ar = new PreparationFindPath().GetPreparationAltitudeMap(LandscapeDictionary,SizeMap);
@@ -134,32 +137,37 @@ public class ModelMain3d
             System.Diagnostics.Debug.WriteLine( "Ad -----" + item.ToString() + "---------------"  );
         }
      }
-
-    void DeployTown()
+    /*
+    void DeployTown(int Count)
     {
+        TownPlaceList = new List<Point2D>();
         List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a=>a.Value.Water==0).ToList();
- 
-        Column column = GetRandomColumn(openColumnList);
-        column.Town = true;
-        TownPlace = column.Position;
-    }
 
+        for (int i=0; i < Count; i++)
+        {
+            Column column = GetRandomColumn(openColumnList);
+            column.Town = true;
+            TownPlaceList.Add(column.Position);
+        }
+    }
+    */
     void DeployTree()
     {
         List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a => a.Value.Water == 0 && a.Value.Town == false).ToList();
         //int rnd = UnityEngine.Random.Range(0, openColumnList.Count);
         //TownPlace = openColumnList[rnd].Value.Position;
-        Column column = GetRandomColumn(openColumnList);
+        Column column = this.townManager.GetRandomColumn(LandscapeDictionary,openColumnList);
         column.Tree = true;
     }
     void DeployUnit()
     {
         List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a => a.Value.Water == 0 && a.Value.Town == false && a.Value.Tree == false).ToList();
         
-        Column column = GetRandomColumn(openColumnList);
+        Column column = this.townManager.GetRandomColumn(LandscapeDictionary,openColumnList);
         column.Unit = true;
         UnitPlace.Position = column.Position;
     }
+    /*
     Column GetRandomColumn(List<KeyValuePair<string, Column>> openColumnList)
     {
         var rand = new System.Random();
@@ -169,6 +177,7 @@ public class ModelMain3d
         Column column = this.LandscapeDictionary[placeRnd.ToString()];
         return column;
     }
+    */
     public bool changeView = false;
 
     public void StepUpdateModel()
@@ -215,7 +224,7 @@ public class ModelMain3d
                         if (checkColumn.Town)
                         {
                             checkColumn.Town = false;
-                            this.DeployTown();
+                            this.townManager.DestroyDeployTown(LandscapeDictionary,checkColumn);
                         }
                         if (checkColumn.Tree)
                         {
@@ -245,7 +254,7 @@ public class ModelMain3d
         {
 
             LeakEvaporation leakEvaporation = new LeakEvaporation();
-UnityEngine.Debug.Log(LandscapeDictionary+"  0005555 -------" + leakEvaporation);
+
             if (leakEvaporation.LeakWater(LandscapeDictionary))
             {
                 UnityEngine.Debug.Log("  0006666-----" );

@@ -91,9 +91,13 @@ public class ViewMain2D : MonoBehaviour
     void DrawnTownTree(Column column, GameObject TownPrefabs)
     {
         //Column column = this.modelMain3d.LandscapeDictionary[this.modelMain3d.TownPlace.ToString()];
-        GameObject townTree = Instantiate(TownPrefabs, new Vector3(xStart + this.modelMain3d.TownPlace.x,
-            yStart + column.Stone + (float)column.Water / 2, column.Position.z), Quaternion.identity);
-        GraphicList.Add(townTree);
+        foreach(var item in this.modelMain3d.townManager.TownPlaceList)
+        {
+            GameObject townTree = Instantiate(TownPrefabs, new Vector3(xStart + item.x,
+                yStart + column.Stone + (float)column.Water / 2, column.Position.z), Quaternion.identity);
+            GraphicList.Add(townTree);
+        }
+        
     }
 
     void RemoveWater()
