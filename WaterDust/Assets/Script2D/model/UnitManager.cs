@@ -17,20 +17,20 @@ public class UnitManager
         //List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a => a.Value.Water == 0 && a.Value.Town == false && a.Value.Tree == false).ToList();
         for (int i = 0; i < Count; i++)
         {
-            DeployOneUnit(LandscapeDictionary, SizeMap);
+            DeployOneUnit(LandscapeDictionary, SizeMap,i);
             UnityEngine.Debug.Log("   004 ----- unit");
         }
     }
-    public void DeployOneUnit(Dictionary<string, Column> LandscapeDictionary,int SizeMap)
+    public void DeployOneUnit(Dictionary<string, Column> LandscapeDictionary,int SizeMap,int FlagId)
     {
         List<KeyValuePair<string, Column>> openColumnList = this.townManager.GetSpaceColumnList(LandscapeDictionary); 
         Column column = new TownManager().GetRandomColumn(LandscapeDictionary, openColumnList);
         column.Unit = true;
 
-        UnitModel unitModel = new UnitModel();
+        UnitModel unitModel = new UnitModel(FlagId);
         unitModel.Position = column.Position;
         UnitPlaceList.Add(unitModel);
-        UnityEngine.Debug.Log(" 001   --------------"+ unitModel.Position.ToString());
+        
         CountPath(LandscapeDictionary, SizeMap);
     }
     public void MoveUnit(Dictionary<string, Column> LandscapeDictionary)

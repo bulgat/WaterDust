@@ -7,6 +7,11 @@ public class UnitModel
 {
   public Point2D Position;
     public List<SuperNode> Path;
+    public int FlagId;
+    public UnitModel(int flagId)
+    {
+        this.FlagId = flagId;
+    }
     public Point2D GetNextPath()
     {
        //Debug.Log("0000  Node ");

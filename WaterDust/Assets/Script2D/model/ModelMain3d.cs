@@ -10,11 +10,9 @@ using System.Threading;
 
 public class ModelMain3d 
 {
-    //public GameObject WaterColumn;
 
-    //public List<Point2D> TownPlaceList;
     public TownManager townManager;
-    //List <UnitModel> UnitPlaceList;
+
     public UnitManager unitManager;
 
     List<List<Column>> Landscape_List;
@@ -32,8 +30,7 @@ public class ModelMain3d
     {
         this.townManager = new TownManager();
         this.unitManager = new UnitManager(this.townManager);
-        //this.UnitPlaceList = new List<UnitModel>();
-        //ParamModel;
+ 
         SizeMap = ParamModel.SizeMap;
         Landscape_List = new List<List<Column>>();
         for (int i = 0; i < SizeMap; i++)
@@ -73,17 +70,12 @@ public class ModelMain3d
             countX++;
         }
         GraphicList = new List<GameObject>();
-        //DrawWater();
+    
  
         this.townManager.DeployTownList(LandscapeDictionary,2);
-        DeployTree();
+        DeployTree(15);
         this.unitManager.DeployUnit(LandscapeDictionary,this.SizeMap, 2);
-        /*
-        foreach(var item in this.unitManager.UnitPlaceList)
-        {
-            TestPath(item);
-        }
-        */
+       
 
         System.Diagnostics.Debug.WriteLine("000 Start--------------");
         
@@ -113,57 +105,19 @@ public class ModelMain3d
         */
         //taskUpdateLandscape.Start();
     }
-    /*
-    void TestPath(UnitModel UnitPlace)
+
+    void DeployTree(int Count)
     {
-        FindPathAltitude findPath = new FindPathAltitude();
-
-        //long DestinationNode_ID_Player = ((int)(2) * 100) + (int)(1);
-        //Point2D DestinationNode_ID_Player = new Point2D(1,2);
-        Point2D DestinationNode_Player = UnitPlace.Position;
-        //long StartNode_ID_Fiend = ((int)2 * 100) + (int)2;
-        //Point2D StartNode_ID_Fiend = new Point2D(2, 2);
-        Point2D StartNode_Fiend = this.townManager.TownPlaceList[0];
-
-        List<long[]> preparationMap_ar_ar = new PreparationFindPath().GetPreparationMap(LandscapeDictionary,SizeMap);
-        List<long[]> preparationMapAltitude_ar = new PreparationFindPath().GetPreparationAltitudeMap(LandscapeDictionary,SizeMap);
-        //preparationMapAltitude_ar[2][2] = 2;
-        //preparationMapAltitude_ar[2][1] = 2;
-        //preparationMapAltitude_ar[2][0] = 1;
-        //preparationMap_ar_ar[(int)WaterCube.GetPointCube().X][(int)WaterCube.GetPointCube().Z] = 0;
-        //preparationMap_ar_ar[(int)waterCubeEnd.X][(int)waterCubeEnd.Z] = 0;
-        //new PreparationFindPath().PrintMap(preparationMap_ar_ar, SizeMap);
-        //new PreparationFindPath().PrintMap(preparationMapAltitude_ar, SizeMap);
-
-        int wallObstacle = 1;
-        UnitPlace.Path = findPath.findShortestPath(DestinationNode_Player, StartNode_Fiend,
-            preparationMap_ar_ar, preparationMapAltitude_ar, wallObstacle, "manhattan", 10, 14);
-        System.Diagnostics.Debug.WriteLine(DestinationNode_Player.ToString()+" ==== "+ StartNode_Fiend .ToString()+ " ====ko  = " + UnitPlace.Path.Count);
-        UnityEngine.Debug.Log(" 03------------");
-        foreach (var item in UnitPlace.Path)
+        for (int i = 0; i < Count; i++)
         {
-            System.Diagnostics.Debug.WriteLine( "Ad ----- Path =" + item.ToString() + "------ ------"  );
+            List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a => a.Value.Water == 0 && a.Value.Town == false).ToList();
+
+            Column column = this.townManager.GetRandomColumn(LandscapeDictionary, openColumnList);
+            column.Tree = true;
+            UnityEngine.Debug.Log(" 01  "+ column.Position.ToString()+ "  --------" + column.Water);
         }
-     }
-  */
-    void DeployTree()
-    {
-        List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a => a.Value.Water == 0 && a.Value.Town == false).ToList();
-        //int rnd = UnityEngine.Random.Range(0, openColumnList.Count);
-        //TownPlace = openColumnList[rnd].Value.Position;
-        Column column = this.townManager.GetRandomColumn(LandscapeDictionary,openColumnList);
-        column.Tree = true;
     }
-    /*
-    void DeployUnit()
-    {
-        List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a => a.Value.Water == 0 && a.Value.Town == false && a.Value.Tree == false).ToList();
-        
-        Column column = this.townManager.GetRandomColumn(LandscapeDictionary,openColumnList);
-        column.Unit = true;
-        UnitPlace.Position = column.Position;
-    }
-    */
+  
     
     public bool changeView = false;
 
@@ -233,11 +187,7 @@ public class ModelMain3d
         if (changeView)
         {
             this.unitManager.MoveUnit(LandscapeDictionary);
-            /*
-            var unitPoint = UnitPlace.GetNextPath();
-            Column column = LandscapeDictionary[unitPoint.ToString()];
-            column.Unit = true;
-            */
+
         }
         
         if (ParamModel.LeakWaterOn)
@@ -264,8 +214,7 @@ public class ModelMain3d
         {
             item.Value.TurnMove = false;
         }
-        
-        //return changeView;
+
     }
 
 }
