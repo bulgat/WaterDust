@@ -14,7 +14,8 @@ public class ModelMain3d
 
     //public List<Point2D> TownPlaceList;
     public TownManager townManager;
-    UnitModel UnitPlace;
+    //List <UnitModel> UnitPlaceList;
+    public UnitManager unitManager;
 
     List<List<Column>> Landscape_List;
     public Dictionary<string, Column> LandscapeDictionary;
@@ -30,7 +31,8 @@ public class ModelMain3d
     public void Start()
     {
         this.townManager = new TownManager();
-        this.UnitPlace = new UnitModel();
+        this.unitManager = new UnitManager(this.townManager);
+        //this.UnitPlaceList = new List<UnitModel>();
         //ParamModel;
         SizeMap = ParamModel.SizeMap;
         Landscape_List = new List<List<Column>>();
@@ -75,9 +77,13 @@ public class ModelMain3d
  
         this.townManager.DeployTownList(LandscapeDictionary,2);
         DeployTree();
-        DeployUnit();
+        this.unitManager.DeployUnit(LandscapeDictionary, 2);
 
-        TestPath();
+        foreach(var item in this.unitManager.UnitPlaceList)
+        {
+            TestPath(item);
+        }
+        
 
         System.Diagnostics.Debug.WriteLine("000 Start--------------");
         
@@ -89,7 +95,7 @@ public class ModelMain3d
                 Thread.Sleep(100);
                 UnityEngine.Debug.Log("  0003------------");
                 StepUpdateModel();
-                UnityEngine.Debug.Log("  0004 ---------");
+                
             }
         });
         /*
@@ -107,7 +113,7 @@ public class ModelMain3d
         */
         //taskUpdateLandscape.Start();
     }
-    void TestPath()
+    void TestPath(UnitModel UnitPlace)
     {
         FindPathAltitude findPath = new FindPathAltitude();
 
@@ -137,20 +143,7 @@ public class ModelMain3d
             System.Diagnostics.Debug.WriteLine( "Ad -----" + item.ToString() + "---------------"  );
         }
      }
-    /*
-    void DeployTown(int Count)
-    {
-        TownPlaceList = new List<Point2D>();
-        List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a=>a.Value.Water==0).ToList();
-
-        for (int i=0; i < Count; i++)
-        {
-            Column column = GetRandomColumn(openColumnList);
-            column.Town = true;
-            TownPlaceList.Add(column.Position);
-        }
-    }
-    */
+  
     void DeployTree()
     {
         List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a => a.Value.Water == 0 && a.Value.Town == false).ToList();
@@ -159,6 +152,7 @@ public class ModelMain3d
         Column column = this.townManager.GetRandomColumn(LandscapeDictionary,openColumnList);
         column.Tree = true;
     }
+    /*
     void DeployUnit()
     {
         List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a => a.Value.Water == 0 && a.Value.Town == false && a.Value.Tree == false).ToList();
@@ -167,17 +161,8 @@ public class ModelMain3d
         column.Unit = true;
         UnitPlace.Position = column.Position;
     }
-    /*
-    Column GetRandomColumn(List<KeyValuePair<string, Column>> openColumnList)
-    {
-        var rand = new System.Random();
-        //int rnd = UnityEngine.Random.Range(0, openColumnList.Count);
-        int rnd = rand.Next(0, openColumnList.Count);
-        var placeRnd = openColumnList[rnd].Value.Position;
-        Column column = this.LandscapeDictionary[placeRnd.ToString()];
-        return column;
-    }
     */
+    
     public bool changeView = false;
 
     public void StepUpdateModel()
@@ -245,9 +230,12 @@ public class ModelMain3d
         
         if (changeView)
         {
+            this.unitManager.MoveUnit(LandscapeDictionary);
+            /*
             var unitPoint = UnitPlace.GetNextPath();
             Column column = LandscapeDictionary[unitPoint.ToString()];
             column.Unit = true;
+            */
         }
         
         if (ParamModel.LeakWaterOn)

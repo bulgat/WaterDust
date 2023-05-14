@@ -82,10 +82,11 @@
     <Compile Include="Assets\Script2D\model\LeakEvaporation.cs" />
     <Compile Include="Assets\Script2D\model\ManagerColumn.cs" />
     <Compile Include="Assets\Scripts\model\Key3D.cs" />
+    <Compile Include="Assets\Script2D\model\TownManager.cs" />
     <Compile Include="Assets\Script2D\View\WaterColumn.cs" />
     <Compile Include="Assets\Scripts\model\Grid.cs" />
     <Compile Include="Assets\Scripts\AltitudeMap.cs" />
-    <Compile Include="Assets\Script2D\model\TownManager.cs" />
+    <Compile Include="Assets\Script2D\model\UnitManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

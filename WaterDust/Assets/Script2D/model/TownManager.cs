@@ -26,14 +26,19 @@ public class TownManager
             
         }
     }
+    public List<KeyValuePair<string, Column>> GetSpaceColumnList(Dictionary<string, Column> LandscapeDictionary)
+    {
+        return LandscapeDictionary.Where(a => a.Value.Water == 0).ToList();
+    }
     public void DeployOneTown(Dictionary<string, Column> LandscapeDictionary)
     {
         TownPlaceList = new List<Point2D>();
-        List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a => a.Value.Water == 0).ToList();
+        //List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a => a.Value.Water == 0).ToList();
+        List<KeyValuePair<string, Column>> openColumnList = GetSpaceColumnList(LandscapeDictionary);
         Column column = GetRandomColumn(LandscapeDictionary, openColumnList);
         column.Town = true;
         TownPlaceList.Add(column.Position);
-UnityEngine.Debug.Log(  "  0005555 ----- -"+ column.Position.ToString());
+        UnityEngine.Debug.Log(  "  0005555 ----- -"+ column.Position.ToString());
     }
     public Column GetRandomColumn(Dictionary<string, Column> LandscapeDictionary,List<KeyValuePair<string, Column>> openColumnList)
     {
