@@ -77,23 +77,23 @@ public class ModelMain3d
  
         this.townManager.DeployTownList(LandscapeDictionary,2);
         DeployTree();
-        this.unitManager.DeployUnit(LandscapeDictionary, 2);
-
+        this.unitManager.DeployUnit(LandscapeDictionary,this.SizeMap, 2);
+        /*
         foreach(var item in this.unitManager.UnitPlaceList)
         {
             TestPath(item);
         }
-        
+        */
 
         System.Diagnostics.Debug.WriteLine("000 Start--------------");
         
         Task taskUpdateLandscape = Task.Factory.StartNew(()=> {
-            UnityEngine.Debug.Log("0001  --- ---------------");
+            
             while (true)
             {
-                UnityEngine.Debug.Log("  0002 ---------------");
+                
                 Thread.Sleep(100);
-                UnityEngine.Debug.Log("  0003------------");
+                
                 StepUpdateModel();
                 
             }
@@ -113,6 +113,7 @@ public class ModelMain3d
         */
         //taskUpdateLandscape.Start();
     }
+    /*
     void TestPath(UnitModel UnitPlace)
     {
         FindPathAltitude findPath = new FindPathAltitude();
@@ -138,12 +139,13 @@ public class ModelMain3d
         UnitPlace.Path = findPath.findShortestPath(DestinationNode_Player, StartNode_Fiend,
             preparationMap_ar_ar, preparationMapAltitude_ar, wallObstacle, "manhattan", 10, 14);
         System.Diagnostics.Debug.WriteLine(DestinationNode_Player.ToString()+" ==== "+ StartNode_Fiend .ToString()+ " ====ko  = " + UnitPlace.Path.Count);
-        foreach(var item in UnitPlace.Path)
+        UnityEngine.Debug.Log(" 03------------");
+        foreach (var item in UnitPlace.Path)
         {
-            System.Diagnostics.Debug.WriteLine( "Ad -----" + item.ToString() + "---------------"  );
+            System.Diagnostics.Debug.WriteLine( "Ad ----- Path =" + item.ToString() + "------ ------"  );
         }
      }
-  
+  */
     void DeployTree()
     {
         List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a => a.Value.Water == 0 && a.Value.Town == false).ToList();
@@ -245,7 +247,7 @@ public class ModelMain3d
 
             if (leakEvaporation.LeakWater(LandscapeDictionary))
             {
-                UnityEngine.Debug.Log("  0006666-----" );
+                
                 FontainCount++;
                 FontainCount = FontainCount >= IndexFontainList.Count ? 0 : FontainCount;
 
@@ -262,7 +264,7 @@ public class ModelMain3d
         {
             item.Value.TurnMove = false;
         }
-        UnityEngine.Debug.Log("  0007777---");
+        
         //return changeView;
     }
 

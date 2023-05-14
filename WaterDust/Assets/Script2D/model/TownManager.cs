@@ -1,4 +1,5 @@
 ﻿using Assets.Script2D;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +8,10 @@ using UnityEngine;
 public class TownManager 
 {
     public List<Point2D> TownPlaceList;
-    System.Random rand;
+    //System.Random Rand;
     public TownManager()
     {
-        rand = new System.Random();
+        //Rand = new System.Random(10000);
     }
     public void DeployTownList(Dictionary<string, Column> LandscapeDictionary,int Count)
     {
@@ -40,11 +41,14 @@ public class TownManager
         TownPlaceList.Add(column.Position);
         UnityEngine.Debug.Log(  "  0005555 ----- -"+ column.Position.ToString());
     }
-    public Column GetRandomColumn(Dictionary<string, Column> LandscapeDictionary,List<KeyValuePair<string, Column>> openColumnList)
+    public Column GetRandomColumn(Dictionary<string, Column> LandscapeDictionary,
+        List<KeyValuePair<string, Column>> openColumnList)
     {
-        
+
         //int rnd = UnityEngine.Random.Range(0, openColumnList.Count);
+        var rand = new System.Random(unchecked((int)(DateTime.Now.Ticks)));
         int rnd = rand.Next(0, openColumnList.Count);
+        UnityEngine.Debug.Log(openColumnList.Count+"     02 --"+ rand.Next(0, openColumnList.Count) + "-- rnd = " + rnd);
         var placeRnd = openColumnList[rnd].Value.Position;
         Column column = LandscapeDictionary[placeRnd.ToString()];
         return column;
