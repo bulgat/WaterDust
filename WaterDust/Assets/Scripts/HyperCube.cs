@@ -17,8 +17,7 @@ public class HyperCube : MonoBehaviour
     public bool PrintPathList;
     public string NameCube;
     Key3D _key3DSide;
-    
-    // Start is called before the first frame update
+
     void Start()
     {
         Impulse = ModelSceneScr.ImpulseStart;

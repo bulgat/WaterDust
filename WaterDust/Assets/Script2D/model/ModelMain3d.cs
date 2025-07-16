@@ -65,8 +65,7 @@ public class ModelMain3d
             countX++;
         }
         GraphicList = new List<GameObject>();
-        //DrawWater();
- 
+
         DeployTown();
         DeployTree();
         DeployUnit();
@@ -77,30 +76,20 @@ public class ModelMain3d
     {
         FindPathAltitude findPath = new FindPathAltitude();
 
-        //long DestinationNode_ID_Player = ((int)(2) * 100) + (int)(1);
-        //Point2D DestinationNode_ID_Player = new Point2D(1,2);
         Point2D DestinationNode_Player = UnitPlace.Position;
-        //long StartNode_ID_Fiend = ((int)2 * 100) + (int)2;
-        //Point2D StartNode_ID_Fiend = new Point2D(2, 2);
+
         Point2D StartNode_Fiend = TownPlace;
 
         List<long[]> preparationMap_ar_ar = new PreparationFindPath().GetPreparationMap(LandscapeDictionary,SizeMap);
         List<long[]> preparationMapAltitude_ar = new PreparationFindPath().GetPreparationAltitudeMap(LandscapeDictionary,SizeMap);
-        //preparationMapAltitude_ar[2][2] = 2;
-        //preparationMapAltitude_ar[2][1] = 2;
-        //preparationMapAltitude_ar[2][0] = 1;
-        //preparationMap_ar_ar[(int)WaterCube.GetPointCube().X][(int)WaterCube.GetPointCube().Z] = 0;
-        //preparationMap_ar_ar[(int)waterCubeEnd.X][(int)waterCubeEnd.Z] = 0;
-        //new PreparationFindPath().PrintMap(preparationMap_ar_ar, SizeMap);
-        //new PreparationFindPath().PrintMap(preparationMapAltitude_ar, SizeMap);
 
         int wallObstacle = 1;
         UnitPlace.Path = findPath.findShortestPath(DestinationNode_Player, StartNode_Fiend,
             preparationMap_ar_ar, preparationMapAltitude_ar, wallObstacle, "manhattan", 10, 14);
-        Debug.Log(DestinationNode_Player.ToString()+" ==== "+ StartNode_Fiend .ToString()+ " ====ko  = " + UnitPlace.Path.Count);
+        
         foreach(var item in UnitPlace.Path)
         {
-            Debug.Log( "Ad -----" + item.ToString() + "---------------"  );
+           // Debug.Log( "Ad -----" + item.ToString() + "---------------"  );
         }
      }
 
@@ -116,8 +105,6 @@ public class ModelMain3d
     void DeployTree()
     {
         List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a => a.Value.Water == 0 && a.Value.Town == false).ToList();
-        //int rnd = UnityEngine.Random.Range(0, openColumnList.Count);
-        //TownPlace = openColumnList[rnd].Value.Position;
         Column column = GetRandomColumn(openColumnList);
         column.Tree = true;
     }

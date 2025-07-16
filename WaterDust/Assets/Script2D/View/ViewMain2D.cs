@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using static UnityEditor.Progress;
+using Assets.Script2D.model;
+using UnityEngine.UI;
 
 public class ViewMain2D : MonoBehaviour
 {
@@ -15,12 +17,25 @@ public class ViewMain2D : MonoBehaviour
     int xStart = -3;
     int yStart = -3;
     ModelMain3d modelMain3d;
+    public FixedJoystick Joystick;
+    public FixedJoystick JoystickRotate;
+    public Camera MainCamera;
+    Vector3 _target = new Vector3(10, 20, 0);
+    public Text LeakWaterSumText;
+    public Text AlluviumRandomText;
+    public Text PrecipitationMudRandomText;
+
     void Start()
     {
         this.modelMain3d = new ModelMain3d();
         this.modelMain3d.Start();
         this.GraphicList = new List<GameObject>();
         DrawWater();
+        MainCamera.transform.LookAt(_target);
+
+        LeakWaterSumText.text = "LeakWaterSum: " + ParamModel.LeakWaterSum.ToString();
+        AlluviumRandomText.text = "AlluviumRandom: " + ParamModel.AlluviumRandom.ToString();
+        PrecipitationMudRandomText.text= "PrecipitationMudRandom: " + ParamModel.PrecipitationMudRandom.ToString();
     }
 
     // Update is called once per frame
@@ -30,11 +45,12 @@ public class ViewMain2D : MonoBehaviour
         {
             RemoveWater();
             DrawWater();
+            UpdateJoystick();
+            UpdateRotateJoystick();
         }
     }
     void DrawWater()
     {
-        //int count = 0;
         foreach (var item in this.modelMain3d.LandscapeDictionary)
         {
 
@@ -101,5 +117,23 @@ public class ViewMain2D : MonoBehaviour
             Destroy(item);
         }
         GraphicList.Clear();
+    }
+
+    void UpdateJoystick()
+    {
+        
+        MainCamera.GetComponent<Camera>().transform.position = new Vector3(
+        MainCamera.GetComponent<Camera>().transform.position.x + Joystick.Horizontal / 5,
+        MainCamera.GetComponent<Camera>().transform.position.y + Joystick.Vertical / 5,
+        MainCamera.GetComponent<Camera>().transform.position.z);
+        
+    }
+    private Vector3 rotateValue;
+    void UpdateRotateJoystick()
+    {
+        //Debug.Log(JoystickRotate.Horizontal+ " === = o  = " + JoystickRotate.Vertical);
+
+        MainCamera.transform.RotateAround(_target, Vector3.up, JoystickRotate.Horizontal*20 * Time.deltaTime);
+        MainCamera.transform.LookAt(_target);
     }
 }
