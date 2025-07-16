@@ -5,6 +5,7 @@ using System.Linq;
 using static UnityEditor.Progress;
 using Assets.Script2D.model;
 using UnityEngine.UI;
+using Assets.Script2D.controller;
 
 public class ViewMain2D : MonoBehaviour
 {
@@ -16,7 +17,6 @@ public class ViewMain2D : MonoBehaviour
     List<GameObject> GraphicList;
     int xStart = -3;
     int yStart = -3;
-    ModelMain3d modelMain3d;
     public FixedJoystick Joystick;
     public FixedJoystick JoystickRotate;
     public Camera MainCamera;
@@ -24,11 +24,15 @@ public class ViewMain2D : MonoBehaviour
     public Text LeakWaterSumText;
     public Text AlluviumRandomText;
     public Text PrecipitationMudRandomText;
+    Controller _controller;
+    ModelMain3d _modelMain3d;
 
     void Start()
     {
-        this.modelMain3d = new ModelMain3d();
-        this.modelMain3d.Start();
+        this._modelMain3d = new ModelMain3d();
+        _controller = new Controller(this._modelMain3d);
+        
+        this._modelMain3d.Start();
         this.GraphicList = new List<GameObject>();
         DrawWater();
         MainCamera.transform.LookAt(_target);
@@ -41,7 +45,7 @@ public class ViewMain2D : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (this.modelMain3d.StepUpdateModel())
+        if (this._modelMain3d.StepUpdateModel())
         {
             RemoveWater();
             DrawWater();
@@ -51,13 +55,18 @@ public class ViewMain2D : MonoBehaviour
     }
     void DrawWater()
     {
-        foreach (var item in this.modelMain3d.LandscapeDictionary)
+        foreach (var item in this._modelMain3d.LandscapeDictionary)
         {
-
+            
             GameObject waterStone = Instantiate(WaterColumn, new Vector2(xStart + item.Value.Position.x, yStart), Quaternion.identity);
             waterStone.transform.localScale = new Vector3(1, item.Value.Stone, 1);
             waterStone.transform.position = new Vector3(xStart + item.Value.Position.x, yStart + (float)item.Value.Stone / 2, item.Value.Position.z);
             waterStone.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.red;
+
+            var child = waterStone.transform.GetChild(0);
+            WaterColumn waterColumn = child.GetComponent<WaterColumn>();
+            waterColumn.SetParam(item.Key, _controller);
+            //Debug.Log("item =" + item.Key+ " child = "+ child+ " waterColumn ="+ waterColumn);
 
             GraphicList.Add(waterStone);
 
@@ -77,13 +86,14 @@ public class ViewMain2D : MonoBehaviour
                 {
                     waterCube.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.cyan;
                 }
-                if (this.modelMain3d.IndexFontainList.Where(a => a.ToString() == item.Key).Any())
+                if (this._modelMain3d.IndexFontainList.Where(a => a.ToString() == item.Key).Any())
                 {
                     waterCube.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.green;
                 }
                
                 WaterColumn water = waterCube.transform.GetChild(0).GetComponent<WaterColumn>();
-                water.Name = item.Value.Position.ToString();
+                //water.Name = item.Value.Position.ToString();
+                water.SetParam(item.Value.Position.ToString(), _controller);
                 GraphicList.Add(waterCube);
 
             }
@@ -105,7 +115,7 @@ public class ViewMain2D : MonoBehaviour
     void DrawnTownTree(Column column, GameObject TownPrefabs)
     {
         //Column column = this.modelMain3d.LandscapeDictionary[this.modelMain3d.TownPlace.ToString()];
-        GameObject townTree = Instantiate(TownPrefabs, new Vector3(xStart + this.modelMain3d.TownPlace.x,
+        GameObject townTree = Instantiate(TownPrefabs, new Vector3(xStart + this._modelMain3d.TownPlace.x,
             yStart + column.Stone + (float)column.Water / 2, column.Position.z), Quaternion.identity);
         GraphicList.Add(townTree);
     }
@@ -131,9 +141,10 @@ public class ViewMain2D : MonoBehaviour
     private Vector3 rotateValue;
     void UpdateRotateJoystick()
     {
-        //Debug.Log(JoystickRotate.Horizontal+ " === = o  = " + JoystickRotate.Vertical);
+
 
         MainCamera.transform.RotateAround(_target, Vector3.up, JoystickRotate.Horizontal*20 * Time.deltaTime);
         MainCamera.transform.LookAt(_target);
     }
+
 }

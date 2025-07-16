@@ -7,7 +7,7 @@ using Assets.Script2D.model;
 
 public class ModelMain3d 
 {
-    //public GameObject WaterColumn;
+
     public Point2D TownPlace;
     UnitModel UnitPlace;
 
@@ -211,4 +211,8 @@ public class ModelMain3d
         return changeView;
     }
 
+    public void AddStoneColumn(string key)
+    {
+        LandscapeDictionary[key].Stone += 1;
+    }
 }
