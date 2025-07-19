@@ -26,7 +26,7 @@ public class ViewMain2D : MonoBehaviour
     public Text PrecipitationMudRandomText;
     Controller _controller;
     ModelMain3d _modelMain3d;
-
+    public Toggle AddStone;
     void Start()
     {
         this._modelMain3d = new ModelMain3d();
@@ -40,6 +40,14 @@ public class ViewMain2D : MonoBehaviour
         LeakWaterSumText.text = "LeakWaterSum: " + ParamModel.LeakWaterSum.ToString();
         AlluviumRandomText.text = "AlluviumRandom: " + ParamModel.AlluviumRandom.ToString();
         PrecipitationMudRandomText.text= "PrecipitationMudRandom: " + ParamModel.PrecipitationMudRandom.ToString();
+
+        AddStone.onValueChanged.AddListener(OnToggleValueChanged);
+    }
+
+    void OnToggleValueChanged(bool addStone)
+    {
+        Debug.Log("it  child =  terColumn ="+ addStone);
+        _controller.AddStone = addStone;
     }
 
     // Update is called once per frame
@@ -66,7 +74,7 @@ public class ViewMain2D : MonoBehaviour
             var child = waterStone.transform.GetChild(0);
             WaterColumn waterColumn = child.GetComponent<WaterColumn>();
             waterColumn.SetParam(item.Key, _controller);
-            //Debug.Log("item =" + item.Key+ " child = "+ child+ " waterColumn ="+ waterColumn);
+
 
             GraphicList.Add(waterStone);
 

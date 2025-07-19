@@ -55,9 +55,11 @@
     <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Joystick Pack\Scripts\Base\Joystick.cs" />
     <Compile Include="Assets\Script2D\View\ViewMain2D.cs" />
     <Compile Include="Assets\Script2D\model\Point2D.cs" />
     <Compile Include="Assets\Scripts\model\CubeSpaceEmpty.cs" />
+    <Compile Include="Assets\Joystick Pack\Examples\JoystickSetterExample.cs" />
     <Compile Include="Assets\Scripts\model\HyperCubeModel.cs" />
     <Compile Include="Assets\Scripts\MoveCubePhysicRealModel.cs" />
     <Compile Include="Assets\Scripts\model\Point.cs" />
@@ -66,6 +68,7 @@
     <Compile Include="Assets\Scripts\model\StoneManager.cs" />
     <Compile Include="Assets\Script2D\model\Column.cs" />
     <Compile Include="Assets\Script2D\model\altitudePath\PreparationFindPath.cs" />
+    <Compile Include="Assets\Joystick Pack\Scripts\Joysticks\FloatingJoystick.cs" />
     <Compile Include="Assets\Scripts\model\ModelList.cs" />
     <Compile Include="Assets\Script2D\model\altitudePath\FindPathAltitude.cs" />
     <Compile Include="Assets\Script2D\model\UnitModel.cs" />
@@ -77,25 +80,23 @@
     <Compile Include="Assets\Script2D\model\ParamModel.cs" />
     <Compile Include="Assets\Script2D\model\ParamInner.cs" />
     <Compile Include="Assets\Scripts\Waves.cs" />
+    <Compile Include="Assets\Joystick Pack\Scripts\Joysticks\DynamicJoystick.cs" />
     <Compile Include="Assets\Scripts\MainWorld.cs" />
     <Compile Include="Assets\Scripts\model\FindPath.cs" />
+    <Compile Include="Assets\Joystick Pack\Scripts\Joysticks\FixedJoystick.cs" />
     <Compile Include="Assets\Scripts\model\ModelSceneScr.cs" />
     <Compile Include="Assets\Scripts\model\SuperNode.cs" />
     <Compile Include="Assets\Script2D\model\ScenarioBuilder.cs" />
+    <Compile Include="Assets\Script2D\View\CubeGround.cs" />
     <Compile Include="Assets\Script2D\model\LeakEvaporation.cs" />
     <Compile Include="Assets\Script2D\model\ManagerColumn.cs" />
+    <Compile Include="Assets\Joystick Pack\Examples\JoystickPlayerExample.cs" />
     <Compile Include="Assets\Scripts\model\Key3D.cs" />
     <Compile Include="Assets\Script2D\View\WaterColumn.cs" />
     <Compile Include="Assets\Scripts\model\Grid.cs" />
     <Compile Include="Assets\Scripts\AltitudeMap.cs" />
-    <Compile Include="Assets\Joystick Pack\Scripts\Base\Joystick.cs" />
-    <Compile Include="Assets\Joystick Pack\Examples\JoystickSetterExample.cs" />
-    <Compile Include="Assets\Joystick Pack\Scripts\Joysticks\FloatingJoystick.cs" />
-    <Compile Include="Assets\Joystick Pack\Scripts\Joysticks\DynamicJoystick.cs" />
-    <Compile Include="Assets\Joystick Pack\Scripts\Joysticks\FixedJoystick.cs" />
-    <Compile Include="Assets\Joystick Pack\Examples\JoystickPlayerExample.cs" />
     <Compile Include="Assets\Joystick Pack\Scripts\Joysticks\VariableJoystick.cs" />
-    <Compile Include="Assets\Script2D\View\CubeGround.cs" />
+    <Compile Include="Assets\Script2D\controller\Controller.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

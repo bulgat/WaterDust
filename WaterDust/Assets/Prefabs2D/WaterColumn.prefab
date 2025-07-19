@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1652042513260260607}
   - component: {fileID: 7022607733715049863}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: CubeWater
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

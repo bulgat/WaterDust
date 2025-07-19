@@ -10,15 +10,14 @@ namespace Assets.Script2D.controller
     public class Controller
     {
         ModelMain3d _modelMain3d;
+        public bool AddStone = true;
         public Controller(ModelMain3d modelMain3d)
         {
             _modelMain3d = modelMain3d;
         }
         public void ClickWaterColumn(string key)
         {
-             Debug.Log( " == o  = " + key);
-            _modelMain3d.AddStoneColumn(key);
-            //_modelMain3d
+            _modelMain3d.AddStoneColumn(key, AddStone);
         }
     }
 }

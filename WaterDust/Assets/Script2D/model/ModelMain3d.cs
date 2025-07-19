@@ -211,8 +211,15 @@ public class ModelMain3d
         return changeView;
     }
 
-    public void AddStoneColumn(string key)
+    public void AddStoneColumn(string key,bool AddStone)
     {
-        LandscapeDictionary[key].Stone += 1;
+        if (AddStone)
+        {
+            LandscapeDictionary[key].Stone += 1;
+
+        } else
+        {
+            LandscapeDictionary[key].Stone -= 1;
+        }
     }
 }
