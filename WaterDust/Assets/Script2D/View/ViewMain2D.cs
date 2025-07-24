@@ -27,6 +27,9 @@ public class ViewMain2D : MonoBehaviour
     Controller _controller;
     ModelMain3d _modelMain3d;
     public Toggle AddStone;
+
+    private GameObject _realUnit;
+
     void Start()
     {
         this._modelMain3d = new ModelMain3d();
@@ -42,15 +45,17 @@ public class ViewMain2D : MonoBehaviour
         PrecipitationMudRandomText.text= "PrecipitationMudRandom: " + ParamModel.PrecipitationMudRandom.ToString();
 
         AddStone.onValueChanged.AddListener(OnToggleValueChanged);
+
+        _realUnit = DrawnTownTree(this._modelMain3d.LandscapeDictionary.FirstOrDefault().Value, Unit);
+
     }
 
     void OnToggleValueChanged(bool addStone)
     {
-        Debug.Log("it  child =  terColumn ="+ addStone);
+
         _controller.AddStone = addStone;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (this._modelMain3d.StepUpdateModel())
@@ -107,27 +112,57 @@ public class ViewMain2D : MonoBehaviour
             }
             if (item.Value.Town)
             {
-                DrawnTownTree(item.Value, Town);
+                GraphicList.Add(DrawnTownTree(item.Value, Town));
             }
             if (item.Value.Tree)
             {
-                DrawnTownTree(item.Value, Tree);
+                GraphicList.Add(DrawnTownTree(item.Value, Tree));
             }
             if (item.Value.Unit)
             {
-                DrawnTownTree(item.Value, Unit);
+                GraphicList.Add(DrawnTownTree(item.Value, Unit));
+
+
             }
         }
         
+                MoveRealUnit();
+
     }
-    void DrawnTownTree(Column column, GameObject TownPrefabs)
+    GameObject DrawnTownTree(Column column, GameObject TownPrefabs)
     {
         //Column column = this.modelMain3d.LandscapeDictionary[this.modelMain3d.TownPlace.ToString()];
         GameObject townTree = Instantiate(TownPrefabs, new Vector3(xStart + this._modelMain3d.TownPlace.x,
             yStart + column.Stone + (float)column.Water / 2, column.Position.z), Quaternion.identity);
-        GraphicList.Add(townTree);
+        //GraphicList.Add(townTree);
+        return townTree;
     }
-
+    void MoveRealUnit()
+    {
+        if (_realUnit == null)
+        {
+            return;
+        }
+        float speedUnit = 0.1f;
+        foreach (var item in this._modelMain3d.RealUnitList)
+        {
+            Debug.Log("child =  ter   =" + _realUnit);
+            _realUnit.transform.position = Vector3.MoveTowards(
+             new Vector3(_realUnit.transform.position.x,
+                 _realUnit.transform.position.y,
+                 _realUnit.transform.position.z),
+             new Vector3(100,
+                 100,
+                 _realUnit.transform.position.z),
+             speedUnit
+             );
+        }
+        foreach (var item in this._modelMain3d.UnitPlace.Path)
+        {
+             Debug.Log( "Ad - -" + item.ToString() + "---------------" + item);
+        }
+        Debug.Log(this._modelMain3d.RealUnitPathList.Count+"------ ----- - ---=" + this._modelMain3d.UnitPlace.Path.Count);
+    }
     void RemoveWater()
     {
         foreach (var item in GraphicList)

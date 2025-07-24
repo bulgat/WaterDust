@@ -9,10 +9,8 @@ public class UnitModel
     public List<SuperNode> Path;
     public Point2D GetNextPath()
     {
-       //Debug.Log("0000  Node ");
         if (Path != null)
         {
-            //Debug.Log("0001  Node ");
             if (Path.Count > 0)
             {
                 var Node = Path[0];

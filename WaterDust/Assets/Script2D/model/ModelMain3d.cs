@@ -9,7 +9,7 @@ public class ModelMain3d
 {
 
     public Point2D TownPlace;
-    UnitModel UnitPlace;
+    public UnitModel UnitPlace;
 
     List<List<Column>> Landscape_List;
     public Dictionary<string, Column> LandscapeDictionary;
@@ -19,13 +19,14 @@ public class ModelMain3d
     int SizeMap = 0;
     public List<Point2D> IndexFontainList;
     int FontainCount = 0;
-    
 
+    public List<RealUnit> RealUnitList;
+    public List<SuperNode> RealUnitPathList;
 
     public void Start()
     {
+        this.RealUnitList = new List<RealUnit>();
         this.UnitPlace = new UnitModel();
-        //ParamModel;
         SizeMap = ParamModel.SizeMap;
         Landscape_List = new List<List<Column>>();
         for (int i = 0; i < SizeMap; i++)
@@ -68,7 +69,8 @@ public class ModelMain3d
 
         DeployTown();
         DeployTree();
-        DeployUnit();
+
+        RealUnitList.Add(new RealUnit(DeployUnit()));
 
         TestPath();
     }
@@ -86,11 +88,9 @@ public class ModelMain3d
         int wallObstacle = 1;
         UnitPlace.Path = findPath.findShortestPath(DestinationNode_Player, StartNode_Fiend,
             preparationMap_ar_ar, preparationMapAltitude_ar, wallObstacle, "manhattan", 10, 14);
-        
-        foreach(var item in UnitPlace.Path)
-        {
-           // Debug.Log( "Ad -----" + item.ToString() + "---------------"  );
-        }
+        RealUnitPathList = UnitPlace.Path;
+
+        Debug.Log(" L =" + UnitPlace.Path.Count);
      }
 
     void DeployTown()
@@ -108,13 +108,14 @@ public class ModelMain3d
         Column column = GetRandomColumn(openColumnList);
         column.Tree = true;
     }
-    void DeployUnit()
+    Point2D DeployUnit()
     {
         List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a => a.Value.Water == 0 && a.Value.Town == false && a.Value.Tree == false).ToList();
         
         Column column = GetRandomColumn(openColumnList);
         column.Unit = true;
         UnitPlace.Position = column.Position;
+        return column.Position;
     }
     Column GetRandomColumn(List<KeyValuePair<string, Column>> openColumnList)
     {
