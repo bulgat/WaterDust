@@ -9,7 +9,7 @@ public class ModelMain3d
 {
 
     public Point2D TownPlace;
-    public UnitModel UnitPlace;
+    UnitModel _UnitPlace;
 
     List<List<Column>> Landscape_List;
     public Dictionary<string, Column> LandscapeDictionary;
@@ -21,12 +21,19 @@ public class ModelMain3d
     int FontainCount = 0;
 
     public List<RealUnit> RealUnitList;
-    public List<SuperNode> RealUnitPathList;
 
-    public void Start()
+    public ModelMain3d() {
+        Start();
+
+
+    }
+
+
+
+    void Start()
     {
         this.RealUnitList = new List<RealUnit>();
-        this.UnitPlace = new UnitModel();
+        this._UnitPlace = new UnitModel();
         SizeMap = ParamModel.SizeMap;
         Landscape_List = new List<List<Column>>();
         for (int i = 0; i < SizeMap; i++)
@@ -67,54 +74,77 @@ public class ModelMain3d
         }
         GraphicList = new List<GameObject>();
 
-        DeployTown();
-        DeployTree();
+        Point2D point2Dtown =  DeployTown();
+        Point2D point2Dtree= DeployTree();
 
         RealUnitList.Add(new RealUnit(DeployUnit()));
 
-        TestPath();
+        TestPath(point2Dtown, point2Dtree);
     }
-    void TestPath()
+    public void StepUnit()
     {
+        RealUnitList.FirstOrDefault().SetStep(Time.time);
+    }
+    public RealUnit GetRealUnit()
+    {
+        return RealUnitList.FirstOrDefault();
+    }
+    void TestPath(Point2D point2Dtown, Point2D point2Dtree)
+    {
+        Debug.Log(point2Dtown+" = SS   key  getColu = "+ point2Dtree);
+
         FindPathAltitude findPath = new FindPathAltitude();
 
-        Point2D DestinationNode_Player = UnitPlace.Position;
+        //Point2D DestinationNode_Player = _UnitPlace.Position;
 
-        Point2D StartNode_Fiend = TownPlace;
+        //Point2D StartNode_Fiend = TownPlace;
+
+        Point2D DestinationNode_Player = point2Dtown;
+
+       Point2D StartNode_Fiend = point2Dtree;
+
+        Debug.Log(DestinationNode_Player+" = column = "+ StartNode_Fiend);
 
         List<long[]> preparationMap_ar_ar = new PreparationFindPath().GetPreparationMap(LandscapeDictionary,SizeMap);
         List<long[]> preparationMapAltitude_ar = new PreparationFindPath().GetPreparationAltitudeMap(LandscapeDictionary,SizeMap);
 
         int wallObstacle = 1;
-        UnitPlace.Path = findPath.findShortestPath(DestinationNode_Player, StartNode_Fiend,
+        _UnitPlace.Path = findPath.findShortestPath(DestinationNode_Player, StartNode_Fiend,
             preparationMap_ar_ar, preparationMapAltitude_ar, wallObstacle, "manhattan", 10, 14);
-        RealUnitPathList = UnitPlace.Path;
 
-        Debug.Log(" L =" + UnitPlace.Path.Count);
+        GetRealUnit().SetPath(findPath.findShortestPath(DestinationNode_Player, StartNode_Fiend,
+            preparationMap_ar_ar, preparationMapAltitude_ar, wallObstacle, "manhattan", 10, 14));
+
+
      }
 
-    void DeployTown()
+    Point2D DeployTown()
     {
         List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a=>a.Value.Water==0).ToList();
  
         Column column = GetRandomColumn(openColumnList);
         column.Town = true;
         TownPlace = column.Position;
+        return TownPlace;
     }
 
-    void DeployTree()
+    Point2D DeployTree()
     {
         List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a => a.Value.Water == 0 && a.Value.Town == false).ToList();
         Column column = GetRandomColumn(openColumnList);
         column.Tree = true;
+        return column.Position;
     }
     Point2D DeployUnit()
     {
         List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a => a.Value.Water == 0 && a.Value.Town == false && a.Value.Tree == false).ToList();
-        
+
         Column column = GetRandomColumn(openColumnList);
         column.Unit = true;
-        UnitPlace.Position = column.Position;
+        _UnitPlace.Position = column.Position;
+
+        Debug.Log("@@@NEW    RealUnitPath  " + column.Position.ToString());
+
         return column.Position;
     }
     Column GetRandomColumn(List<KeyValuePair<string, Column>> openColumnList)
@@ -180,10 +210,9 @@ public class ModelMain3d
                         {
                             checkColumn.Unit = false;
                         }
-                        var unitPoint = UnitPlace.GetNextPath();
+                        var unitPoint = _UnitPlace.GetNextPath();
                         Column column = LandscapeDictionary[unitPoint.ToString()];
-                        column.Unit = true;
-
+                        //column.Unit = true;
                         changeView = true;
 
                     }

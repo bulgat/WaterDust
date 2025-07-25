@@ -19,5 +19,9 @@ namespace Assets.Script2D.controller
         {
             _modelMain3d.AddStoneColumn(key, AddStone);
         }
+        public void StepUnit()
+        {
+            _modelMain3d.StepUnit();
+        }
     }
 }

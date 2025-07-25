@@ -6,6 +6,7 @@ using static UnityEditor.Progress;
 using Assets.Script2D.model;
 using UnityEngine.UI;
 using Assets.Script2D.controller;
+using System;
 
 public class ViewMain2D : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class ViewMain2D : MonoBehaviour
     public GameObject Unit;
 
     List<GameObject> GraphicList;
+    Dictionary<string, GameObject> GraphicDictionary;
     int xStart = -3;
     int yStart = -3;
     public FixedJoystick Joystick;
@@ -34,9 +36,9 @@ public class ViewMain2D : MonoBehaviour
     {
         this._modelMain3d = new ModelMain3d();
         _controller = new Controller(this._modelMain3d);
-        
-        this._modelMain3d.Start();
+
         this.GraphicList = new List<GameObject>();
+        GraphicDictionary = new Dictionary<string, GameObject>();
         DrawWater();
         MainCamera.transform.LookAt(_target);
 
@@ -46,7 +48,7 @@ public class ViewMain2D : MonoBehaviour
 
         AddStone.onValueChanged.AddListener(OnToggleValueChanged);
 
-        _realUnit = DrawnTownTree(this._modelMain3d.LandscapeDictionary.FirstOrDefault().Value, Unit);
+        _realUnit = DrawnTownTree(this._modelMain3d.LandscapeDictionary[this._modelMain3d.GetRealUnit().RealUnitPathList[this._modelMain3d.GetRealUnit().Step].ToString()], Unit);
 
     }
 
@@ -65,76 +67,83 @@ public class ViewMain2D : MonoBehaviour
             UpdateJoystick();
             UpdateRotateJoystick();
         }
+
+
+
     }
+    WaterColumn GetChildColumn(GameObject waterStone) {
+        var child = waterStone.transform.GetChild(0);
+        WaterColumn waterColumn = child.GetComponent<WaterColumn>();
+        return waterColumn;
+    }
+
     void DrawWater()
     {
-        foreach (var item in this._modelMain3d.LandscapeDictionary)
+        foreach (var column in this._modelMain3d.LandscapeDictionary)
         {
             
-            GameObject waterStone = Instantiate(WaterColumn, new Vector2(xStart + item.Value.Position.x, yStart), Quaternion.identity);
-            waterStone.transform.localScale = new Vector3(1, item.Value.Stone, 1);
-            waterStone.transform.position = new Vector3(xStart + item.Value.Position.x, yStart + (float)item.Value.Stone / 2, item.Value.Position.z);
+            GameObject waterStone = Instantiate(WaterColumn, new Vector2(xStart + column.Value.Position.x, yStart), Quaternion.identity);
+            waterStone.transform.localScale = new Vector3(1, column.Value.Stone, 1);
+            waterStone.transform.position = new Vector3(xStart + column.Value.Position.x, yStart + (float)column.Value.Stone / 2, column.Value.Position.z);
             waterStone.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.red;
 
-            var child = waterStone.transform.GetChild(0);
-            WaterColumn waterColumn = child.GetComponent<WaterColumn>();
-            waterColumn.SetParam(item.Key, _controller);
+            WaterColumn waterColumn = GetChildColumn(waterStone);
+
+            waterColumn.SetParam(column.Key, _controller);
 
 
             GraphicList.Add(waterStone);
+            GraphicDictionary.Add(column.Key, waterStone);
 
-            if (item.Value.Water > 0)
+            if (column.Value.Water > 0)
             {
-                GameObject waterCube = Instantiate(WaterColumn, new Vector2(xStart + item.Value.Position.x, yStart), Quaternion.identity);
-                waterCube.transform.localScale = new Vector3(1, item.Value.Water, 1);
+                GameObject waterCube = Instantiate(WaterColumn, new Vector2(xStart + column.Value.Position.x, yStart), Quaternion.identity);
+                waterCube.transform.localScale = new Vector3(1, column.Value.Water, 1);
+                waterCube.transform.position = new Vector3(xStart + column.Value.Position.x, yStart + column.Value.Stone + (float)column.Value.Water / 2, column.Value.Position.z);
 
-                waterCube.transform.position = new Vector3(xStart + item.Value.Position.x, yStart + item.Value.Stone + (float)item.Value.Water / 2, item.Value.Position.z);
-
-                if (item.Value.DebugWater)
+                if (column.Value.DebugWater)
                 {
 
                     waterCube.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.yellow;
                 }
-                if (item.Value.Mud)
+                if (column.Value.Mud)
                 {
                     waterCube.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.cyan;
                 }
-                if (this._modelMain3d.IndexFontainList.Where(a => a.ToString() == item.Key).Any())
+                if (this._modelMain3d.IndexFontainList.Where(a => a.ToString() == column.Key).Any())
                 {
                     waterCube.transform.GetChild(0).GetComponent<Renderer>().material.color = Color.green;
                 }
                
                 WaterColumn water = waterCube.transform.GetChild(0).GetComponent<WaterColumn>();
                 //water.Name = item.Value.Position.ToString();
-                water.SetParam(item.Value.Position.ToString(), _controller);
+                water.SetParam(column.Value.Position.ToString(), _controller);
                 GraphicList.Add(waterCube);
 
             }
-            if (item.Value.Town)
+            if (column.Value.Town)
             {
-                GraphicList.Add(DrawnTownTree(item.Value, Town));
+                GraphicList.Add(DrawnTownTree(column.Value, Town));
             }
-            if (item.Value.Tree)
+            if (column.Value.Tree)
             {
-                GraphicList.Add(DrawnTownTree(item.Value, Tree));
+                GraphicList.Add(DrawnTownTree(column.Value, Tree));
             }
-            if (item.Value.Unit)
+            if (column.Value.Unit)
             {
-                GraphicList.Add(DrawnTownTree(item.Value, Unit));
+                GraphicList.Add(DrawnTownTree(column.Value, Unit));
 
 
             }
         }
         
-                MoveRealUnit();
+        MoveRealUnit();
 
     }
     GameObject DrawnTownTree(Column column, GameObject TownPrefabs)
     {
-        //Column column = this.modelMain3d.LandscapeDictionary[this.modelMain3d.TownPlace.ToString()];
         GameObject townTree = Instantiate(TownPrefabs, new Vector3(xStart + this._modelMain3d.TownPlace.x,
             yStart + column.Stone + (float)column.Water / 2, column.Position.z), Quaternion.identity);
-        //GraphicList.Add(townTree);
         return townTree;
     }
     void MoveRealUnit()
@@ -143,25 +152,44 @@ public class ViewMain2D : MonoBehaviour
         {
             return;
         }
-        float speedUnit = 0.1f;
-        foreach (var item in this._modelMain3d.RealUnitList)
+        if(this._modelMain3d.GetRealUnit().RealUnitPathList.Count<= this._modelMain3d.GetRealUnit().Step)
         {
-            Debug.Log("child =  ter   =" + _realUnit);
+            return;
+        }
+        if (this._modelMain3d.GetRealUnit().Time<Time.time) {
+            Debug.Log("###  L= -  -- " + this._modelMain3d.GetRealUnit().RealUnitPathList[this._modelMain3d.GetRealUnit().Step].ToString()+ "  Time.time ="+ Time.time+ "  GetRealUnit() = "+ this._modelMain3d.GetRealUnit().Step);
+            Debug.Log("  XXXXX X   L== " + this._modelMain3d.GetRealUnit().RealUnitPathList.Count());
+            _controller.StepUnit();
+        }
+
+        GameObject targetColumn = this.GraphicDictionary[this._modelMain3d.GetRealUnit().RealUnitPathList[this._modelMain3d.GetRealUnit().Step].ToString()];
+        WaterColumn waterColumn = GetChildColumn(targetColumn);
+        var column = this._modelMain3d.LandscapeDictionary[this._modelMain3d.GetRealUnit().RealUnitPathList[this._modelMain3d.GetRealUnit().Step].ToString()];
+
+        float speedUnit = 0.1f;
+        //foreach (var item in this._modelMain3d.RealUnitPathList)
+        //{
+
             _realUnit.transform.position = Vector3.MoveTowards(
              new Vector3(_realUnit.transform.position.x,
                  _realUnit.transform.position.y,
                  _realUnit.transform.position.z),
+             //targetColumn.transform.position
+              new Vector3(targetColumn.transform.position.x, column.Stone, targetColumn.transform.position.z)
+
+             /*
              new Vector3(100,
                  100,
-                 _realUnit.transform.position.z),
+                 _realUnit.transform.position.z)*/
+             ,
              speedUnit
              );
-        }
-        foreach (var item in this._modelMain3d.UnitPlace.Path)
-        {
-             Debug.Log( "Ad - -" + item.ToString() + "---------------" + item);
-        }
-        Debug.Log(this._modelMain3d.RealUnitPathList.Count+"------ ----- - ---=" + this._modelMain3d.UnitPlace.Path.Count);
+        //}
+        //foreach (var item in this._modelMain3d._UnitPlace.Path)
+        //{
+         //    Debug.Log( "Ad - -" + item.ToString() + "------------" + item+" L = "+ this._modelMain3d.RealUnitPathList.Count);
+        //}
+
     }
     void RemoveWater()
     {
@@ -169,6 +197,7 @@ public class ViewMain2D : MonoBehaviour
         {
             Destroy(item);
         }
+        GraphicDictionary.Clear();
         GraphicList.Clear();
     }
 
