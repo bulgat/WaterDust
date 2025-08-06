@@ -28,6 +28,8 @@ public class ViewMain2D : MonoBehaviour
     public Text PrecipitationMudRandomText;
     Controller _controller;
     ModelMain3d _modelMain3d;
+
+    public Toggle EditStone;
     public Toggle AddStone;
 
     private GameObject _realUnit;
@@ -46,6 +48,7 @@ public class ViewMain2D : MonoBehaviour
         AlluviumRandomText.text = "AlluviumRandom: " + ParamModel.AlluviumRandom.ToString();
         PrecipitationMudRandomText.text= "PrecipitationMudRandom: " + ParamModel.PrecipitationMudRandom.ToString();
 
+        EditStone.onValueChanged.AddListener(OnToggleEditStone);
         AddStone.onValueChanged.AddListener(OnToggleValueChanged);
 
         _realUnit = DrawnTownTree(this._modelMain3d.LandscapeDictionary[this._modelMain3d.GetRealUnit().RealUnitPathList[this._modelMain3d.GetRealUnit().Step].ToString()], Unit);
@@ -56,6 +59,11 @@ public class ViewMain2D : MonoBehaviour
     {
 
         _controller.AddStone = addStone;
+    }
+    void OnToggleEditStone(bool editStone)
+    {
+
+        _controller.EditStone = editStone;
     }
 
     void Update()

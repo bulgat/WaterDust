@@ -19,13 +19,14 @@ namespace Assets.Script2D.model
                     if (0 == rnd)
                     {
                         itemValue.Stone -= 1;
+                        return true;
                     }
-                    return true;
+                    
                 }
             }
             return false;
         }
-        public void PrecipitationMud(Column checkColumn)
+        public bool PrecipitationMud(Column checkColumn)
         {
             if (checkColumn.Mud)
             {
@@ -37,9 +38,11 @@ namespace Assets.Script2D.model
                     {
                         checkColumn.Stone += 1;
                         checkColumn.Mud = false;
+                        return true;
                     }
                 }
             }
+            return false;
         }
     }
     

@@ -11,13 +11,17 @@ namespace Assets.Script2D.controller
     {
         ModelMain3d _modelMain3d;
         public bool AddStone = true;
+        public bool EditStone = true;
         public Controller(ModelMain3d modelMain3d)
         {
             _modelMain3d = modelMain3d;
         }
         public void ClickWaterColumn(string key)
         {
-            _modelMain3d.AddStoneColumn(key, AddStone);
+            if (EditStone)
+            {
+                _modelMain3d.AddStoneColumn(key, AddStone);
+            }
         }
         public void StepUnit()
         {

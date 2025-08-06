@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq;
 using Assets.Script2D;
 using Assets.Script2D.model;
+using System;
 
 public class ModelMain3d 
 {
@@ -21,6 +22,7 @@ public class ModelMain3d
     int FontainCount = 0;
 
     public List<RealUnit> RealUnitList;
+    public static event Action ActionChangeMap;
 
     public ModelMain3d() {
         Start();
@@ -32,6 +34,7 @@ public class ModelMain3d
 
     void Start()
     {
+        ActionChangeMap += ChangeMap;
         this.RealUnitList = new List<RealUnit>();
         this._UnitPlace = new UnitModel();
         SizeMap = ParamModel.SizeMap;
@@ -81,6 +84,13 @@ public class ModelMain3d
 
         TestPath(point2Dtown, point2Dtree);
     }
+    private void ChangeMap()
+    {
+        //DoStuff
+        Debug.Log("@@@NEW  UnitPath  " );
+    }
+
+
     public void StepUnit()
     {
         RealUnitList.FirstOrDefault().SetStep(Time.time);
@@ -143,8 +153,6 @@ public class ModelMain3d
         column.Unit = true;
         _UnitPlace.Position = column.Position;
 
-        Debug.Log("@@@NEW    RealUnitPath  " + column.Position.ToString());
-
         return column.Position;
     }
     Column GetRandomColumn(List<KeyValuePair<string, Column>> openColumnList)
@@ -195,6 +203,8 @@ public class ModelMain3d
                         if (new AlluviumPrecipitation().AlluviumStone(item.Value))
                         {
                             checkColumn.Mud = true;
+                            //несем землю.
+                            ActionChangeMap?.Invoke();
                         }
                         //затопление города
                         if (checkColumn.Town)
@@ -212,7 +222,6 @@ public class ModelMain3d
                         }
                         var unitPoint = _UnitPlace.GetNextPath();
                         Column column = LandscapeDictionary[unitPoint.ToString()];
-                        //column.Unit = true;
                         changeView = true;
 
                     }

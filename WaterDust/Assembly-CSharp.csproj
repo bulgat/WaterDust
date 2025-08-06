@@ -74,6 +74,7 @@
     <Compile Include="Assets\Script2D\model\UnitModel.cs" />
     <Compile Include="Assets\Scripts\HyperCube.cs" />
     <Compile Include="Assets\Script2D\model\AlluviumPrecipitation.cs" />
+    <Compile Include="Assets\Script2D\controller\Controller.cs" />
     <Compile Include="Assets\Scripts\ViewScene.cs" />
     <Compile Include="Assets\Script2D\model\DebugPrint.cs" />
     <Compile Include="Assets\Scripts\SceneScr.cs" />
@@ -96,7 +97,7 @@
     <Compile Include="Assets\Scripts\model\Grid.cs" />
     <Compile Include="Assets\Scripts\AltitudeMap.cs" />
     <Compile Include="Assets\Joystick Pack\Scripts\Joysticks\VariableJoystick.cs" />
-    <Compile Include="Assets\Script2D\controller\Controller.cs" />
+    <Compile Include="Assets\Script2D\model\RealUnit.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
