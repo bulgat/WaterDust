@@ -21,6 +21,10 @@ namespace Assets.Script2D.controller
             if (EditStone)
             {
                 _modelMain3d.AddStoneColumn(key, AddStone);
+            } else
+            {
+                Debug.Log("@@@N UnitPath  ");
+                _modelMain3d.SetPlaceColumn(key);
             }
         }
         public void StepUnit()

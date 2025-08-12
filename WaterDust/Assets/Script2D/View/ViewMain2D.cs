@@ -150,8 +150,12 @@ public class ViewMain2D : MonoBehaviour
     }
     GameObject DrawnTownTree(Column column, GameObject TownPrefabs)
     {
-        GameObject townTree = Instantiate(TownPrefabs, new Vector3(xStart + this._modelMain3d.TownPlace.x,
-            yStart + column.Stone + (float)column.Water / 2, column.Position.z), Quaternion.identity);
+        //Debug.Log(" = SS   key   lu = ");
+        GameObject townTree = Instantiate(TownPrefabs, 
+            new Vector3(xStart + this._modelMain3d.TownPlace.x,
+            yStart + column.Stone + (float)column.Water / 2,
+            column.Position.z),
+            Quaternion.identity);
         return townTree;
     }
     void MoveRealUnit()
@@ -175,8 +179,7 @@ public class ViewMain2D : MonoBehaviour
         var column = this._modelMain3d.LandscapeDictionary[this._modelMain3d.GetRealUnit().RealUnitPathList[this._modelMain3d.GetRealUnit().Step].ToString()];
 
         float speedUnit = 0.1f;
-        //foreach (var item in this._modelMain3d.RealUnitPathList)
-        //{
+
 
             _realUnit.transform.position = Vector3.MoveTowards(
              new Vector3(_realUnit.transform.position.x,
@@ -185,18 +188,11 @@ public class ViewMain2D : MonoBehaviour
              //targetColumn.transform.position
               new Vector3(targetColumn.transform.position.x, column.Stone, targetColumn.transform.position.z)
 
-             /*
-             new Vector3(100,
-                 100,
-                 _realUnit.transform.position.z)*/
+
              ,
              speedUnit
              );
-        //}
-        //foreach (var item in this._modelMain3d._UnitPlace.Path)
-        //{
-         //    Debug.Log( "Ad - -" + item.ToString() + "------------" + item+" L = "+ this._modelMain3d.RealUnitPathList.Count);
-        //}
+
 
     }
     void RemoveWater()

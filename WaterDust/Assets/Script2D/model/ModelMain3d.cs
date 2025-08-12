@@ -77,17 +77,19 @@ public class ModelMain3d
         }
         GraphicList = new List<GameObject>();
 
-        Point2D point2Dtown =  DeployTown();
-        Point2D point2Dtree= DeployTree();
+        DeployRandom();
+        //Point2D point2Dtown =  DeployTown();
+        //Point2D point2Dtree= DeployTree();
 
-        RealUnitList.Add(new RealUnit(DeployUnit()));
+        RealUnitList.Add(new RealUnit(_UnitPlace.Position));
 
-        TestPath(point2Dtown, point2Dtree);
+        TestPath(_UnitPlace.Position, TownPlace);
     }
     private void ChangeMap()
     {
         //DoStuff
-        Debug.Log("@@@NEW  UnitPath  " );
+        
+        TestPath(_UnitPlace.Position, TownPlace);
     }
 
 
@@ -99,19 +101,14 @@ public class ModelMain3d
     {
         return RealUnitList.FirstOrDefault();
     }
-    void TestPath(Point2D point2Dtown, Point2D point2Dtree)
+    void TestPath(Point2D DestinationNode_Player, Point2D StartNode_Fiend)
     {
-        Debug.Log(point2Dtown+" = SS   key  getColu = "+ point2Dtree);
 
         FindPathAltitude findPath = new FindPathAltitude();
 
         //Point2D DestinationNode_Player = _UnitPlace.Position;
 
         //Point2D StartNode_Fiend = TownPlace;
-
-        Point2D DestinationNode_Player = point2Dtown;
-
-       Point2D StartNode_Fiend = point2Dtree;
 
         Debug.Log(DestinationNode_Player+" = column = "+ StartNode_Fiend);
 
@@ -128,28 +125,44 @@ public class ModelMain3d
 
      }
 
-    Point2D DeployTown()
+    void DeployRandom()
     {
-        List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a=>a.Value.Water==0).ToList();
- 
+        List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a => a.Value.Water == 0 && a.Value.Town == false).ToList();
         Column column = GetRandomColumn(openColumnList);
+        DeployTree(column);
+
+        List<KeyValuePair<string, Column>> openColumnTownList = LandscapeDictionary.Where(a => a.Value.Water == 0).ToList();
+        Column columnTown = GetRandomColumn(openColumnList);
+        DeployTown(columnTown);
+
+        List<KeyValuePair<string, Column>> openColumnUnitList = LandscapeDictionary.Where(a => a.Value.Water == 0 && a.Value.Town == false && a.Value.Tree == false).ToList();
+
+        Column columnUnit = GetRandomColumn(openColumnList);
+        DeployUnit(columnUnit);
+    }
+
+    Point2D DeployTown(Column column)
+    {
+        //List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a=>a.Value.Water==0).ToList();
+ 
+        //Column column = GetRandomColumn(openColumnList);
         column.Town = true;
         TownPlace = column.Position;
         return TownPlace;
     }
 
-    Point2D DeployTree()
+    Point2D DeployTree(Column column)
     {
-        List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a => a.Value.Water == 0 && a.Value.Town == false).ToList();
-        Column column = GetRandomColumn(openColumnList);
+        //List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a => a.Value.Water == 0 && a.Value.Town == false).ToList();
+        //Column column = GetRandomColumn(openColumnList);
         column.Tree = true;
         return column.Position;
     }
-    Point2D DeployUnit()
+    Point2D DeployUnit(Column column)
     {
-        List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a => a.Value.Water == 0 && a.Value.Town == false && a.Value.Tree == false).ToList();
+        //List<KeyValuePair<string, Column>> openColumnList = LandscapeDictionary.Where(a => a.Value.Water == 0 && a.Value.Town == false && a.Value.Tree == false).ToList();
 
-        Column column = GetRandomColumn(openColumnList);
+        //Column column = GetRandomColumn(openColumnList);
         column.Unit = true;
         _UnitPlace.Position = column.Position;
 
@@ -210,12 +223,14 @@ public class ModelMain3d
                         if (checkColumn.Town)
                         {
                             checkColumn.Town = false;
-                            this.DeployTown();
+                            this.DeployTown(checkColumn);
                         }
+                        //затопление леса
                         if (checkColumn.Tree)
                         {
                             checkColumn.Tree = false;
                         }
+                        //затопление юнита
                         if (checkColumn.Unit)
                         {
                             checkColumn.Unit = false;
@@ -249,7 +264,11 @@ public class ModelMain3d
         
         return changeView;
     }
-
+    public void SetPlaceColumn(string key)
+    {
+        //TownPlace = LandscapeDictionary[key].Position;
+        DeployTown(LandscapeDictionary[key]);
+    }
     public void AddStoneColumn(string key,bool AddStone)
     {
         if (AddStone)
